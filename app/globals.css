@@ -2,19 +2,36 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #09090b;
+  --terminal-green: #14b8a6;
+  --terminal-glow: 0 0 10px rgba(20, 184, 166, 0.5);
+  
+  /* GUI Theme (DevPortal-GUI) */
+  --gui-bg: #0f172a;
+  --gui-primary: #1e293b;
+  --gui-accent: #22c55e;
+  --gui-text: #f8fafc;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-ibm-plex), var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, SFMono-Regular;
+  --font-vt323: var(--font-vt323);
+  --font-press-start: var(--font-press-start);
+  --font-bebas: var(--font-press-start); /* Mapping fallback for Inter mode */
+  
+  --color-gui-bg: var(--gui-bg);
+  --color-gui-primary: var(--gui-primary);
+  --color-gui-accent: var(--gui-accent);
+  --color-gui-text: var(--gui-text);
+  --color-accent: var(--gui-accent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #09090b;
     --foreground: #ededed;
   }
 }
@@ -22,5 +39,107 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+/* CRT & Terminal Effects */
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  z-index: 500;
+  animation: flicker 0.15s infinite;
+}
+
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(transparent 0%, rgba(32, 128, 32, 0.02) 50%, transparent 100%);
+  background-size: 100% 4px;
+  animation: scanline 10s linear infinite;
+  pointer-events: none;
+  z-index: 501;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.993; }
+  5% { opacity: 0.94; }
+  10% { opacity: 0.99; }
+  15% { opacity: 0.95; }
+  20% { opacity: 0.99; }
+  25% { opacity: 0.96; }
+  30% { opacity: 0.99; }
+  35% { opacity: 0.93; }
+  40% { opacity: 0.99; }
+  45% { opacity: 0.94; }
+  50% { opacity: 0.99; }
+  55% { opacity: 0.97; }
+  60% { opacity: 0.99; }
+  65% { opacity: 0.93; }
+  70% { opacity: 0.99; }
+  75% { opacity: 0.96; }
+  80% { opacity: 0.99; }
+  85% { opacity: 0.95; }
+  90% { opacity: 0.99; }
+  95% { opacity: 0.94; }
+  100% { opacity: 0.99; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text:hover {
+  animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+}
+
+.terminal-text-glow {
+  text-shadow: var(--terminal-glow);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.2);
+  border-radius: 2px;
+}
+
+.font-vt323 { font-family: var(--font-vt323), monospace; }
+.font-press-start { font-family: var(--font-press-start), cursive; }
+.font-mono-tech { font-family: var(--font-mono), monospace; }
+
+/* GUI Specific Utilities */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

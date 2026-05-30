@@ -1,0 +1,217 @@
+:root {
+    --bg-color: #09090b;
+    --text-primary: #14b8a6; /* Teal-500 */
+    --text-dim: #0d9488;
+    --prompt-color: #2dd4bf;
+    --glow: 0 0 10px rgba(20, 184, 166, 0.5);
+    --margin: 48px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-primary);
+    background-color: var(--bg-color);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* CRT EFFECTS */
+.crt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(transparent 0%, rgba(32, 128, 32, 0.02) 50%, transparent 100%);
+    background-size: 100% 4px;
+    animation: scanline 10s linear infinite;
+    pointer-events: none;
+    z-index: 101;
+}
+
+@keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+}
+
+/* TERMINAL LAYOUT */
+.terminal-container {
+    position: relative;
+    margin: var(--margin);
+    height: calc(100vh - (var(--margin) * 2));
+    background-color: var(--bg-color);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    text-shadow: var(--glow);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.terminal-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+.terminal-history::-webkit-scrollbar {
+    width: 4px;
+}
+.terminal-history::-webkit-scrollbar-thumb {
+    background: rgba(20, 184, 166, 0.2);
+}
+
+.line {
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+.welcome {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+.input-line {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.prompt {
+    color: var(--prompt-color);
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.input-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
+#terminal-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0;
+    text-shadow: var(--glow);
+}
+
+.ghost-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: rgba(20, 184, 166, 0.3);
+    pointer-events: none;
+}
+
+/* VIRTUAL BUFFER (OVERLAY) */
+.virtual-buffer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    z-index: 50;
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+}
+
+.buffer-header {
+    font-family: 'VT323', cursive;
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--text-primary);
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+}
+
+.buffer-content {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* GUI MODE */
+.gui-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    color: #09090b;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+}
+
+.gui-mode.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.gui-nav {
+    padding: 20px 48px;
+    border-bottom: 1px solid #e4e4e7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.gui-content {
+    padding: 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.card {
+    padding: 24px;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+}
+
+.hidden { display: none !important; }

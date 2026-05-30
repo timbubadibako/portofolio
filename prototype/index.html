@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPortal - Terminal Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black overflow-hidden">
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+    
+    <div id="terminal-container" class="terminal-container">
+        <div id="terminal-history" class="terminal-history">
+            <div class="line welcome">Welcome to jrilym-portal [Version 1.0.4]</div>
+            <div class="line welcome">Type 'help' to see available commands.</div>
+            <br>
+        </div>
+        
+        <div class="input-line">
+            <span class="prompt">guest@jrilym-portal:~$</span>
+            <div class="input-wrapper">
+                <span id="ghost-text" class="ghost-text"></span>
+                <input type="text" id="terminal-input" autofocus spellcheck="false" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <div id="gui-mode" class="gui-mode hidden">
+        <nav class="gui-nav">
+            <div class="logo">DevPortal v1.0</div>
+            <div class="nav-links">
+                <button onclick="switchMode('terminal')">Back to Terminal</button>
+            </div>
+        </nav>
+        <main class="gui-content">
+            <div class="hero">
+                <h1>Modern GUI Mode</h1>
+                <p>This is the modern interface that renders after the transition.</p>
+                <div class="card-grid">
+                    <div class="card"><h3>Project A</h3><p>Innovative SaaS solution.</p></div>
+                    <div class="card"><h3>Project B</h3><p>Cross-platform mobile app.</p></div>
+                    <div class="card"><h3>Project C</h3><p>AI-powered automation tool.</p></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
