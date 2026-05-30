@@ -1,8 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 💻 TIMBUBADIBAKO // Developer Portal & Scaffolding Hub
 
-First, run the development server:
+> An interactive portfolio, microservices hub, and AI Prompt Decorator built for high-intensity digital experiences.
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with `create-next-app`, serving as a dual-purpose platform: a public-facing portfolio and an internal command center for project initialization.
+
+## 🚀 Core Features
+
+*   **Artifacts Collection:** A dynamic showcase of completed projects across Fullstack Web, Mobile App, and AI domains.
+*   **AI Prompt Decorator:** Generates strict coding rules, database blueprints, and context files (`project-context.json`) specifically optimized for Gemini CLI and other LLM engines.
+*   **Scaffolding Hub:** Automates project initialization with ready-to-use terminal command snippets and boilerplate setups.
+*   **Task & Time Log:** Integrated task tracker that automatically generates Conventional Commit messages based on task status.
+
+## 🛠️ Tech Stack
+
+*   **Framework:** [Next.js](https://nextjs.org/) (App Router)
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/) (Sci-Fi / Terminal OS Aesthetic)
+*   **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+*   **Database & Backend:** [Supabase](https://supabase.com/) & Prisma ORM
+
+## ⚙️ Getting Started
+
+First, run the local development server:
 
 ```bash
 npm run dev
@@ -12,25 +31,24 @@ yarn dev
 pnpm dev
 # or
 bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Deployment (Vercel)
 
-## Learn More
+This project is fully optimized for serverless deployment. The easiest way to deploy is to use the [Vercel Platform](https://vercel.com/new).
 
-To learn more about Next.js, take a look at the following resources:
+1. Push your code to your GitHub repository.
+2. Import the project into Vercel.
+3. Configure your Environment Variables (e.g., `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`).
+4. Deploy!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
