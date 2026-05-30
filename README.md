@@ -48,7 +48,3 @@ This project is fully optimized for serverless deployment. The easiest way to de
 4. Deploy!
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-```
-
-```
