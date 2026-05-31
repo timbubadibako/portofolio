@@ -33,10 +33,21 @@ const navItems: NavItem[] = [
 export function NvimSidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const [notes, setNotes] = useState<string[]>([])
+  const [notes, setNotes] = useState<any[]>([])
 
   useEffect(() => {
-    setNotes(['welcome_log.md', 'architecture.md', 'security_audit.log'])
+    async function fetchNotesList() {
+      try {
+        const res = await fetch('/api/notes')
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setNotes(data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch notes index")
+      }
+    }
+    fetchNotesList()
   }, [])
 
   const checkIsActive = (itemHref: string) => {
@@ -159,23 +170,23 @@ export function NvimSidebar() {
                     </div>
                     <ul className="space-y-1 p-2">
                        {notes.map(note => (
-                         <li key={note}>
+                         <li key={note.id}>
                            <Link 
-                             href={`/notes/${note}`}
+                             href={`/notes/${note.id}`}
                              onClick={() => {
                                 window.dispatchEvent(new CustomEvent('section-transition'))
                                 setIsOpen(false)
                              }}
                              className={cn(
                                "flex items-center gap-3 px-8 py-1.5 font-mono text-[10px] transition-colors group",
-                               pathname === `/notes/${note}` ? "text-teal-400" : "text-white/20 hover:text-teal-500/60"
+                               pathname === `/notes/${note.id}` ? "text-teal-400" : "text-white/20 hover:text-teal-500/60"
                              )}
                            >
                               <span className={cn(
                                 "transition-opacity",
-                                pathname === `/notes/${note}` ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                                pathname === `/notes/${note.id}` ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                               )}>»</span>
-                              {note}
+                              {note.id}
                            </Link>
                          </li>
                        ))}

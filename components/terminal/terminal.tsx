@@ -25,6 +25,7 @@ type Command = {
 
 const COMMAND_LIST = [
   "reboot",
+  "whoami",
   "cat profile.txt",
   "yay -S pajril-stack",
   "ls -la projects/",
@@ -35,12 +36,14 @@ const COMMAND_LIST = [
   "cat contact.txt",
   "startx",
   "sudo generate",
+  "history",
+  "theme",
   "clear",
   "help"
 ]
 
 const NAV_SHORTCUTS = [
-  { label: "Identity", cmd: "cat profile.txt" },
+  { label: "Identity", cmd: "whoami" },
   { label: "Skills", cmd: "yay -S pajril-stack" },
   { label: "Projects", cmd: "ls -la projects/" },
   { label: "Log", cmd: "cat background.log" },
@@ -275,9 +278,42 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
         setCurrentSection("contact")
         break
 
+      case "whoami":
+        output = (
+          <div className="space-y-4 font-mono text-xs md:text-sm">
+             <p className="text-teal-400 font-bold uppercase tracking-widest">[ IDENTITY_READOUT ]</p>
+             <p className="text-white/60 leading-relaxed max-w-2xl">
+                I am an autonomous digital entity architecting high-integrity ecosystems. 
+                By day, I build neural-interfaced fullstack applications. 
+                By night, I optimize custom kernels and maintain decentralized system nodes.
+             </p>
+             <p className="text-teal-500/40 italic">"Small problems are still problems."</p>
+          </div>
+        )
+        setCurrentSection("profile")
+        break
+
+      case "history":
+        const historyList = commandHistory.map((h, i) => `${i + 1}  ${h.input}`).join('\n')
+        output = <pre className="text-white/40 text-[10px]">{historyList || "1  history"}</pre>
+        setCurrentSection(null)
+        break
+
+      case "theme":
+        output = <p className="text-amber-500 animate-pulse uppercase tracking-widest">[ SECURITY_ALERT ] System theme restricted to industrial_teal. (Amber_Legacy override failed)</p>
+        setCurrentSection(null)
+        break
+
       case "clear":
         setCommandHistory([])
         setCurrentSection(null)
+        setInput("")
+        return
+
+      case "reboot":
+        setCommandHistory([])
+        setIsBooting(true)
+        setBootMsgIndex(0)
         setInput("")
         return
 

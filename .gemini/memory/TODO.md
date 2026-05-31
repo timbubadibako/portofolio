@@ -29,5 +29,12 @@
 - [x] **Redundant Files:** Removed `components/Navbar.tsx`.
 
 ## 🚀 Deployment
-- [ ] **Vercel Analytics:** Enable real-time traffic monitoring.
+- [x] **Vercel Analytics:** Enable real-time traffic monitoring.
 - [x] **SEO Optimization:** Dynamic Metadata & OpenGraph configured in `layout.tsx`.
+
+## 🧪 Phase 4: Technical Polish & Depth
+- [x] **Dynamic Note Archive:** Automate note listing via API route for `/notes`.
+- [x] **Advanced Markdown:** Implement syntax highlighting and rich formatting for field notes.
+- [x] **Biometric Dashboard:** Enhance `/profile` with radar charts and deep technical stats.
+- [x] **Terminal Expansion:** Add `whoami`, `theme`, and `history` commands.
+- [x] **Production SEO:** Generate `sitemap.xml` and `robots.txt`.
