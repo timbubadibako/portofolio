@@ -1,7 +1,6 @@
 "use client"
 
 import { HeroSection } from "./hero-section"
-import { SignalsSection } from "./signals-section"
 import { ProjectsSection } from "./projects-section"
 import { ChronologySection } from "./chronology-section"
 import { CoreArsenalSection } from "./core-arsenal-section"
@@ -24,11 +23,18 @@ export function Page({ onModeSwitch }: { onModeSwitch?: (mode: 'gui' | 'terminal
 
           <div className="relative z-10">
             <HeroSection />
+            
+            {/* 
+                PREVIEW SECTIONS 
+                These sections serve as the "brief preview" on the root page.
+                Sidebar links to their dedicated /page for full detail.
+            */}
             <CoreArsenalSection />
             <ProjectsSection />
             <ScaffoldingHubSection />
             <ChronologySection />
             <MissionControlSection />
+            
             <ColophonSection onModeSwitch={onModeSwitch} />
           </div>
         </div>

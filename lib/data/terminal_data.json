@@ -15,5 +15,65 @@
     "email": "pjrlywm@gmail.com",
     "github": "timbubadibako",
     "linkedin": "syifa-pajril-yaum-730162264"
-  }
+  },
+  "skills": [
+    { "pkg": "pajril-web", "items": "Next.js, TS, Tailwind, Prisma", "stable": 98 },
+    { "pkg": "pajril-mobile", "items": "Flutter, Kotlin, Swift", "stable": 92 },
+    { "pkg": "pajril-ai", "items": "Python, PyTorch, NLP", "stable": 88 },
+    { "pkg": "pajril-infra", "items": "Arch, Docker, AWS", "stable": 85 }
+  ],
+  "projects": [
+    {
+      "id": "stride_io",
+      "title": "STRIDE_IO",
+      "desc": "Gamified Fitness Tracker (Kotlin/GPS)",
+      "tech": "Kotlin, Supabase, Maps SDK"
+    },
+    {
+      "id": "nexio",
+      "title": "NEXIO_MARKETPLACE",
+      "desc": "Enterprise B2B Cloud Marketplace",
+      "tech": "Next.js 16, TS, Prisma"
+    },
+    {
+      "id": "asr_engine",
+      "title": "ASR_ENGINE",
+      "desc": "Neural Speech Processing Model",
+      "tech": "Python, PyTorch, HuggingFace"
+    }
+  ],
+  "experience": [
+    {
+      "ts": "2024.02",
+      "role": "Lab Assistant",
+      "org": "UNIKU Neural Labs",
+      "desc": "Developing AI interfaces and secure system orchestration."
+    },
+    {
+      "ts": "2023.08",
+      "role": "Frontend Intern",
+      "org": "Cyber Solutions",
+      "desc": "Architecting industrial-grade GUI components."
+    }
+  ],
+  "education": [
+    {
+      "ts": "2023.09",
+      "degree": "B.S. Informatics",
+      "org": "Universitas Kuningan (UNIKU)",
+      "desc": "Focusing on AI Integration and System Security."
+    }
+  ],
+  "certifications": [
+    {
+      "ts": "2024.01",
+      "title": "IDCamp AI Certification",
+      "org": "Indosat Ooredoo Hutchison"
+    },
+    {
+      "ts": "2023.11",
+      "title": "Microsoft Elevate Security",
+      "org": "Microsoft"
+    }
+  ]
 }

@@ -15,6 +15,7 @@ import { ContactSection } from "@/components/terminal/sections/contact-section"
 import { ImageAsciiLogo } from "@/components/terminal/image-ascii-logo"
 import { GlitchText } from "@/components/inter/glitch-text"
 import { useRouter } from "next/navigation"
+import { useAppStore } from "@/store/useAppStore"
 
 type Command = {
   input: string
@@ -59,6 +60,7 @@ const bootMessages = [
 
 export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui' | 'terminal' | 'inter') => void }) {
   const router = useRouter()
+  const { setMode } = useAppStore()
   const [input, setInput] = useState("")
   const [commandHistory, setCommandHistory] = useState<Command[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
@@ -91,7 +93,6 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
       } else {
         const finalizeTimer = setTimeout(() => {
           setIsBooting(false)
-          // Add first history item
           setCommandHistory([
             {
               input: "system_init",
@@ -113,6 +114,24 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
       }
     }
   }, [isBooting, bootMsgIndex])
+
+  // MutationObserver to handle auto-scroll for staggered content animations
+  useEffect(() => {
+    if (!terminalRef.current) return
+
+    const observer = new MutationObserver(() => {
+      scrollToBottom()
+    })
+
+    observer.observe(terminalRef.current, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true
+    })
+
+    return () => observer.disconnect()
+  }, [scrollToBottom])
 
   useEffect(() => {
     if (!isBooting) {
@@ -167,6 +186,7 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
         timestamp: new Date()
       }])
       setTimeout(() => {
+        setMode('gui')
         onModeSwitch('gui')
       }, 1000)
       setInput("")
@@ -294,7 +314,7 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
       
       if (sudoCommand === "generate" || sudoCommand === "scaffold" || sudoCommand === "builder") {
         setTimeout(() => {
-           router.push('/scaffold')
+           router.push('/generator')
         }, 1000)
       }
     } else {

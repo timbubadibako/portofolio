@@ -9,85 +9,41 @@ import {
   BookOpen, Globe, Shield, Zap, Box, Clock, Activity, Cpu, Monitor
 } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface NavItem {
   id: string
   label: string
   icon: any
   path: string
+  href: string
   type: 'file' | 'folder'
 }
 
 const navItems: NavItem[] = [
-  { id: "hero", label: "identity.sys", icon: FileText, path: "~/root/identity", type: 'file' },
-  { id: "principles", label: "arsenal/", icon: Folder, path: "~/root/arsenal", type: 'folder' },
-  { id: "projects", label: "artifacts/", icon: Folder, path: "~/root/artifacts", type: 'folder' },
-  { id: "scaffold", label: "generator/", icon: Folder, path: "~/root/generator", type: 'folder' },
-  { id: "chronology", label: "system_log.log", icon: FileText, path: "~/root/system_log", type: 'file' },
-  { id: "mission_control", label: "mission_ctrl/", icon: Folder, path: "~/root/mission_ctrl", type: 'folder' },
+  { id: "identity", label: "identity.sys", icon: FileText, path: "~/root/identity", href: "/", type: 'file' },
+  { id: "profile", label: "profile.bio", icon: User, path: "~/root/profile", href: "/profile", type: 'file' },
+  { id: "projects", label: "artifacts/", icon: Folder, path: "~/root/artifacts", href: "/projects", type: 'folder' },
+  { id: "generator", label: "generator/", icon: Zap, path: "~/root/generator", href: "/generator", type: 'file' },
+  { id: "background", label: "system_log.log", icon: Clock, path: "~/root/system_log", href: "/background", type: 'file' },
+  { id: "notes", label: "_Field_Notes/", icon: BookOpen, path: "~/root/_Field_Notes", href: "/notes", type: 'folder' },
 ]
 
 export function NvimSidebar() {
   const [isOpen, setIsOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState("hero")
+  const pathname = usePathname()
   const [notes, setNotes] = useState<string[]>([])
-  const [selectedNote, setSelectedIdNote] = useState<string | null>(null)
-  const [noteContent, setNoteContent] = useState<string>("")
-  const [isNoteLoading, setIsNoteLoading] = useState(false)
 
   useEffect(() => {
     setNotes(['welcome_log.md', 'architecture.md', 'security_audit.log'])
   }, [])
 
-  useEffect(() => {
-    if (selectedNote) {
-       setIsNoteLoading(true)
-       fetch(`/content/notes/${selectedNote}`)
-         .then(res => res.text())
-         .then(text => {
-            setNoteContent(text)
-            setIsNoteLoading(false)
-         })
-         .catch(err => {
-            setNoteContent("ERROR: Failed to load buffer data.")
-            setIsNoteLoading(false)
-         })
-    }
-  }, [selectedNote])
-
-  const scrollToSection = (id: string) => {
-    window.dispatchEvent(new CustomEvent('section-transition'))
-
-    const element = document.getElementById(id)
-    if (element) {
-      setTimeout(() => {
-        element.scrollIntoView({ behavior: "smooth" })
-      }, 100)
-      setIsOpen(false)
-    }
+  const checkIsActive = (itemHref: string) => {
+    if (itemHref === '/' && pathname === '/') return true
+    if (itemHref !== '/' && pathname.startsWith(itemHref)) return true
+    return false
   }
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 3
-      const sections = ["hero", "principles", "projects", "scaffold", "chronology", "mission_control"]
-      
-      for (const id of sections) {
-        const element = document.getElementById(id)
-        if (element) {
-          const { top, bottom } = element.getBoundingClientRect()
-          const absTop = top + window.scrollY
-          const absBottom = bottom + window.scrollY
-          if (scrollPosition >= absTop && scrollPosition <= absBottom) {
-            setActiveSection(id)
-            break
-          }
-        }
-      }
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
 
   return (
     <>
@@ -157,35 +113,43 @@ export function NvimSidebar() {
                     <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">Explorer: ~/root</span>
                  </div>
                  <div className="space-y-1 p-2">
-                    {navItems.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => scrollToSection(item.id)}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-4 py-2 font-mono text-xs transition-all duration-200 group relative",
-                          activeSection === item.id 
-                            ? "text-teal-400 bg-teal-500/5" 
-                            : "text-white/30 hover:text-white/60 hover:bg-white/5"
-                        )}
-                      >
-                         <ChevronRight className={cn(
-                           "h-3 w-3 transition-transform",
-                           activeSection === item.id ? "rotate-90 text-teal-500" : "opacity-0 group-hover:opacity-100"
-                         )} />
-                         <item.icon className={cn("h-4 w-4 shrink-0", activeSection === item.id ? "text-teal-500" : "opacity-20")} />
-                         <span className="truncate tracking-tight">{item.label}</span>
-                         
-                         {activeSection === item.id && (
-                           <div className="absolute right-4 h-1.5 w-1.5 bg-teal-500 animate-pulse" />
-                         )}
+                    {navItems.map((item) => {
+                      const isActive = checkIsActive(item.href)
+                      
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => {
+                             window.dispatchEvent(new CustomEvent('section-transition'))
+                             setIsOpen(false)
+                          }}
+                          className={cn(
+                            "w-full flex items-center gap-3 px-4 py-2 font-mono text-xs transition-all duration-200 group relative",
+                            isActive 
+                              ? "text-teal-400 bg-teal-500/5" 
+                              : "text-white/30 hover:text-white/60 hover:bg-white/5"
+                          )}
+                        >
+                           <ChevronRight className={cn(
+                             "h-3 w-3 transition-transform",
+                             isActive ? "rotate-90 text-teal-500" : "opacity-0 group-hover:opacity-100"
+                           )} />
+                           <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-teal-500" : "opacity-20")} />
+                           <span className="truncate tracking-tight">{item.label}</span>
+                           
+                           {isActive && (
+                             <div className="absolute right-4 h-1.5 w-1.5 bg-teal-500 animate-pulse" />
+                           )}
 
-                         <div className="absolute left-full ml-4 bg-black border border-white/10 px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 pointer-events-none translate-x-2 group-hover:translate-x-0 hidden lg:block z-[900]">
-                            <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-teal-500/40" />
-                            <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-teal-500/40" />
-                            <span className="font-mono text-[8px] font-bold text-teal-400 whitespace-nowrap tracking-[0.2em]">{item.label}</span>
-                         </div>
-                      </button>
-                    ))}
+                           <div className="absolute left-full ml-4 bg-black border border-white/10 px-3 py-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 pointer-events-none translate-x-2 group-hover:translate-x-0 hidden lg:block z-[900]">
+                              <div className="absolute top-0 left-0 w-1 h-1 border-t border-l border-teal-500/40" />
+                              <div className="absolute bottom-0 right-0 w-1 h-1 border-b border-r border-teal-500/40" />
+                              <span className="font-mono text-[8px] font-bold text-teal-400 whitespace-nowrap tracking-[0.2em]">{item.label}</span>
+                           </div>
+                        </Link>
+                      )
+                    })}
                  </div>
 
                  <div className="mt-8 px-4 space-y-4">
@@ -195,13 +159,24 @@ export function NvimSidebar() {
                     </div>
                     <ul className="space-y-1 p-2">
                        {notes.map(note => (
-                         <li 
-                           key={note}
-                           onClick={() => setSelectedIdNote(note)}
-                           className="flex items-center gap-3 px-8 py-1.5 font-mono text-[10px] text-white/20 hover:text-teal-500/60 cursor-pointer transition-colors group"
-                         >
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity">»</span>
-                            {note}
+                         <li key={note}>
+                           <Link 
+                             href={`/notes/${note}`}
+                             onClick={() => {
+                                window.dispatchEvent(new CustomEvent('section-transition'))
+                                setIsOpen(false)
+                             }}
+                             className={cn(
+                               "flex items-center gap-3 px-8 py-1.5 font-mono text-[10px] transition-colors group",
+                               pathname === `/notes/${note}` ? "text-teal-400" : "text-white/20 hover:text-teal-500/60"
+                             )}
+                           >
+                              <span className={cn(
+                                "transition-opacity",
+                                pathname === `/notes/${note}` ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                              )}>»</span>
+                              {note}
+                           </Link>
                          </li>
                        ))}
                     </ul>
@@ -228,56 +203,6 @@ export function NvimSidebar() {
             </motion.aside>
           </>
         )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-         {selectedNote && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               exit={{ opacity: 0 }}
-               className="fixed inset-0 z-[1000] flex items-center justify-center p-6 md:p-20"
-            >
-               <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setSelectedIdNote(null)} />
-               <motion.div 
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  className="relative w-full max-w-4xl max-h-[80vh] bg-zinc-950 border border-white/10 flex flex-col shadow-2xl"
-               >
-                  <div className="p-4 border-b border-white/5 bg-zinc-900/30 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest">
-                     <div className="flex items-center gap-3">
-                        <FileText className="h-3 w-3 text-teal-500" />
-                        <span className="text-white/60">Buffer:</span>
-                        <span className="text-teal-400 font-bold">{selectedNote}</span>
-                     </div>
-                     <button onClick={() => setSelectedIdNote(null)} className="text-white/20 hover:text-white transition-colors">
-                        [ :q! ]
-                     </button>
-                  </div>
-                  <div className="flex-1 overflow-y-auto p-8 md:p-12 font-mono text-sm leading-relaxed text-white/60 custom-scrollbar">
-                     {isNoteLoading ? (
-                        <div className="flex items-center gap-3 text-teal-500 animate-pulse">
-                           <Activity className="h-4 w-4" /> [ READING_BUFFER... ]
-                        </div>
-                     ) : (
-                        <div className="prose prose-invert prose-teal max-w-none">
-                           <h1 className="text-white text-xl font-press-start mb-8 tracking-tighter uppercase underline decoration-teal-500/20 underline-offset-8">
-                              {selectedNote.replace('.md', '').replace('.log', '').replace('_', ' ')}
-                           </h1>
-                           <p className="text-teal-500/40 text-[10px] uppercase mb-12 tracking-[0.5em]">--- Begin_Transmission ---</p>
-                           
-                           <div className="space-y-6 whitespace-pre-wrap">
-                              {noteContent}
-                           </div>
-
-                           <p className="text-teal-500/40 text-[10px] uppercase mt-12 tracking-[0.5em]">--- End_of_Buffer ---</p>
-                        </div>
-                     )}
-                  </div>
-               </motion.div>
-            </motion.div>
-         )}
       </AnimatePresence>
     </>
   )

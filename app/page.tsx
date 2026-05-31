@@ -1,19 +1,23 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
 import Terminal from "@/components/terminal/terminal"
 import { Page as InterPage } from "@/components/inter/page"
 import { NvimSidebar } from "@/components/inter/nvim-sidebar"
 import { DataStreamTransition } from "@/components/inter/data-stream-transition"
 import { AnimatedNoise } from "@/components/inter/animated-noise"
-
-type DisplayMode = 'terminal' | 'gui'
+import { useAppStore } from '@/store/useAppStore'
 
 export default function GrandControllerPage() {
-  const [mode, setMode] = useState<DisplayMode>('terminal')
+  const { mode, setMode } = useAppStore()
+  const [mounted, setMounted] = useState(false)
 
-  // Apply overflow style to body to ensure scrolling works correctly for SideNav
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Apply overflow style to body
   useEffect(() => {
     if (mode === 'gui') {
       document.body.style.overflow = 'auto'
@@ -30,18 +34,15 @@ export default function GrandControllerPage() {
     }
   }
 
+  if (!mounted) return null
+
   return (
     <div className="relative min-h-screen bg-black font-mono selection:bg-teal-500/30 overflow-x-hidden">
-      {/* 
-          GLOBAL OVERLAYS 
-          Kept at root to ensure they are always on top and truly fixed
-      */}
       <div className="crt-overlay pointer-events-none z-[1000]" />
       <div className="scanlines pointer-events-none z-[1001]" />
       <AnimatedNoise opacity={0.03} />
       <DataStreamTransition />
       
-      {/* Global Navigation: NvimTree Sidebar */}
       {mode === 'gui' && <NvimSidebar />}
 
       <AnimatePresence mode="wait">
@@ -55,7 +56,6 @@ export default function GrandControllerPage() {
             className="relative z-10 h-screen overflow-hidden"
           >
              <div className="fixed inset-0 z-0 bg-black">
-              {/* Industrial Grid for Terminal Mode */}
               <div 
                 className="absolute inset-0 opacity-10 pointer-events-none" 
                 style={{ 

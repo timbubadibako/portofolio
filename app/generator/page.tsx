@@ -10,8 +10,10 @@ import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ScrambleText } from '@/components/inter/scramble-text'
 import { AnimatedNoise } from '@/components/inter/animated-noise'
+import { NvimSidebar } from '@/components/inter/nvim-sidebar'
+import { DataStreamTransition } from '@/components/inter/data-stream-transition'
 
-export default function ScaffoldPage() {
+export default function GeneratorPage() {
   const [step, setStep] = useState(1)
   const store = useProjectStore()
   const [copied, setCopied] = useState(false)
@@ -37,13 +39,15 @@ export default function ScaffoldPage() {
   const prevStep = () => setStep(s => Math.max(s - 1, 1))
 
   return (
-    <div className="relative min-h-screen bg-black font-mono selection:bg-teal-500/30 overflow-hidden flex flex-col">
+    <div className="relative min-h-screen bg-black font-mono selection:bg-teal-500/30 overflow-y-auto flex flex-col custom-scrollbar">
       {/* Global Overlays */}
       <div className="crt-overlay pointer-events-none z-[1000]" />
       <div className="scanlines pointer-events-none z-[1001]" />
       <AnimatedNoise opacity={0.03} />
+      <DataStreamTransition />
+      <NvimSidebar />
 
-      <div className="flex-1 container mx-auto px-6 py-12 md:py-20 flex flex-col max-w-6xl relative z-10">
+      <div className="flex-1 container mx-auto px-6 py-12 md:py-24 flex flex-col max-w-6xl relative z-10">
         
         {/* Header Section */}
         <div className="mb-16 space-y-6">
@@ -52,12 +56,12 @@ export default function ScaffoldPage() {
                  <Zap className="h-5 w-5" />
               </div>
               <span className="font-mono text-[10px] uppercase tracking-[0.4em] text-teal-500 font-bold">
-                 MODULE // SCAFFOLDING_HUB
+                 MODULE // PROJECT_GENERATOR
               </span>
            </div>
            <h1 className="font-press-start text-3xl md:text-5xl tracking-tighter uppercase terminal-text-glow text-white leading-tight">
-              <ScrambleText text="SCAFFOLDING" duration={1} /> <br />
-              <span className="text-teal-500/40">HUB_v1.0.4</span>
+              <ScrambleText text="PROJECT" duration={1} /> <br />
+              <span className="text-teal-500/40">GENERATOR_v1.0.4</span>
            </h1>
            <p className="text-white/40 text-xs md:text-sm uppercase tracking-widest leading-relaxed max-w-xl border-l border-teal-500/20 pl-6">
               Establish high-integrity project blueprints and generate AI-ready context schemas for neural orchestration.
@@ -109,7 +113,7 @@ export default function ScaffoldPage() {
               </div>
            </div>
 
-           <div className="flex-1 p-8 md:p-12 overflow-y-auto custom-scrollbar relative">
+           <div className="flex-1 p-8 md:p-12 relative">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step}

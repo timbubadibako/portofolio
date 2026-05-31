@@ -1,85 +1,87 @@
+"use client"
+
 import { AsciiArt } from "@/components/terminal/ascii-art"
+import { useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export function ProjectsSection({ filter, mode = 'gui' }: { filter?: string, mode?: 'gui' | 'terminal' }) {
-  const projects = [
-    {
-      id: "stride_io_gps",
-      title: "STRIDE_IO",
-      diagram: `
-  +-------------+     +----------------+     +----------------+
-  | Mobile App  |---->| GPS Tracking   |---->| Gamification   |
-  | (Flutter)   |     | (Real-time)    |     | Engine         |
-  +-------------+     +----------------+     +----------------+
-        |                    |                      |
-        v                    v                      v
-  +-------------+     +----------------+     +----------------+
-  | Health Data |<----| API Gateway    |---->| Leaderboards   |
-  +-------------+     +----------------+     +----------------+
-`,
-      description: "A gamified fitness application focused on high-precision GPS tracking and real-time social competition. Built with Flutter and Supabase.",
-      tech: "Flutter, Dart, Supabase, Google Maps SDK"
-    },
-    {
-      id: "nexio_marketplace",
-      title: "NEXIO MARKETPLACE",
-      diagram: `
-  +-------------+     +----------------+     +----------------+
-  | Web Portal  |---->| Auth & RLS     |---->| Transaction    |
-  | (Next.js)   |     | (Supabase)     |     | Processing     |
-  +-------------+     +----------------+     +----------------+
-        |                                            |
-        v                                            v
-  +-------------+                            +----------------+
-  | Inventory   |                            | Stripe / DB    |
-  | Management  |                            | Integration    |
-  +-------------+                            +----------------+
-`,
-      description: "Enterprise-grade e-commerce marketplace featuring real-time inventory management and secure server-side transactions.",
-      tech: "Next.js, TypeScript, Tailwind CSS, Supabase"
-    },
-    {
-      id: "speech_asr_ai",
-      title: "ASR ENGINE",
-      diagram: `
-  +-------------+     +----------------+     +----------------+
-  | Audio Input |---->| Feature        |---->| Transformer    |
-  | (WAV/MP3)   |     | Extraction     |     | Model (AI)     |
-  +-------------+     +----------------+     +----------------+
-        |                                            |
-        v                                            v
-  +-------------+                            +----------------+
-  | Waveform    |                            | Text Output    |
-  | Analysis    |                            | (JSON/MD)      |
-  +-------------+                            +----------------+
-`,
-      description: "Automatic Speech Recognition engine utilizing advanced transformer architectures for high-fidelity audio-to-text conversion.",
-      tech: "Python, PyTorch, Librosa, HuggingFace"
+  const [projects, setProjects] = useState<any[]>([])
+  const [visibleCount, setVisibleCount] = useState(0)
+
+  useEffect(() => {
+    if (mode === 'terminal') {
+      const termData = require('@/lib/data/terminal_data.json')
+      setProjects(termData.projects.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        description: p.desc,
+        tech: p.tech,
+        diagram: `
+  +-------------+     +----------------+
+  | [${p.id}]   |---->| SYSTEM_NODE    |
+  +-------------+     +----------------+
+`
+      })))
+    } else {
+      const guiData = require('@/lib/data/projects.json')
+      setProjects(guiData.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        tech: p.tech,
+        diagram: `
+  +-------------+     +----------------+
+  | [${p.id}]   |---->| SYSTEM_NODE    |
+  +-------------+     +----------------+
+`
+      })))
     }
-  ]
+  }, [mode])
 
   const displayedProjects = filter 
-    ? projects.filter(p => p.id === filter)
+    ? projects.filter(p => p.id.toLowerCase().includes(filter.toLowerCase()))
     : projects
+
+  useEffect(() => {
+    if (visibleCount < displayedProjects.length) {
+      const timer = setTimeout(() => {
+        setVisibleCount(prev => prev + 1)
+      }, 400)
+      return () => clearTimeout(timer)
+    }
+  }, [visibleCount, displayedProjects.length])
 
   return (
     <div className="space-y-4">
       {!filter && <AsciiArt art="projects" />}
 
       <div className="space-y-8">
-        {displayedProjects.map(project => (
-          <ProjectCard 
-            key={project.id}
-            title={project.title}
-            diagram={project.diagram}
-            description={project.description}
-            tech={project.tech}
-          />
-        ))}
+        <AnimatePresence>
+          {displayedProjects.slice(0, visibleCount).map((project, idx) => (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ProjectCard 
+                title={project.title}
+                diagram={project.diagram}
+                description={project.description}
+                tech={project.tech}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
-        {filter && (
-          <p className="text-[10px] text-teal-500/40 uppercase tracking-widest animate-pulse mt-8">
+        {filter && visibleCount === displayedProjects.length && (
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[10px] text-teal-500/40 uppercase tracking-widest animate-pulse mt-8"
+          >
             End of file: {filter}.md // Type 'ls -la projects/' to go back.
-          </p>
+          </motion.p>
         )}
       </div>
     </div>
@@ -89,7 +91,6 @@ export function ProjectsSection({ filter, mode = 'gui' }: { filter?: string, mod
 function ProjectCard({ title, diagram, description, tech }: { title: string; diagram: string; description: string; tech: string }) {
   return (
     <div className="p-6 border border-teal-500/20 bg-teal-500/5 relative overflow-hidden group hover:border-teal-500/40 transition-all">
-      {/* Corner Accents */}
       <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-teal-500/40" />
       <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-teal-500/40" />
 

@@ -4,10 +4,12 @@ import { useRef, useEffect } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ExternalLink, Mail, Terminal, Zap, Globe, MapPin } from "lucide-react"
+import { useAppStore } from "@/store/useAppStore"
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function ColophonSection({ onModeSwitch }: { onModeSwitch?: (mode: 'gui' | 'terminal' | 'inter') => void }) {
+  const { setMode } = useAppStore()
   const sectionRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -99,7 +101,10 @@ export function ColophonSection({ onModeSwitch }: { onModeSwitch?: (mode: 'gui' 
                 </p>
              </div>
              <button 
-               onClick={() => onModeSwitch?.('terminal')}
+               onClick={() => {
+                  setMode('terminal')
+                  onModeSwitch?.('terminal')
+               }}
                className="group flex items-center gap-6 p-1 pl-10 border border-teal-500/30 bg-black hover:bg-teal-500/5 transition-all duration-500 hover:border-teal-500 hover:shadow-[0_0_30px_rgba(20,184,166,0.3)]"
              >
                <span className="font-press-start text-[8px] text-teal-500/40 group-hover:text-teal-500 transition-colors uppercase tracking-tight">

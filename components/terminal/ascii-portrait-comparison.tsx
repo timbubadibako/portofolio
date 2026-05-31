@@ -1,17 +1,32 @@
 "use client"
 
-import { AsciiPortraitCanvas } from "./ascii-portrait-canvas"
+import React from "react"
 
 export function AsciiPortraitComparison() {
-  // Using fixed values as requested
-  const contrast = 1.4
-  const brightness = 0.7
-
+  // Static placeholder ASCII portrait until user provides their own
   return (
-    <div className="space-y-4">
-      <AsciiPortraitCanvas width={100} height={120} contrast={contrast} brightness={brightness} />
-      <div className="text-center text-xs text-muted-foreground mt-2">ASCII Art Portrait</div>
+    <div className="bg-black p-4 border border-teal-500/20 relative overflow-hidden group">
+      <pre className="text-teal-500/60 font-mono text-[6px] md:text-[8px] leading-none text-center">
+{`
+         .MMMMMMM.
+       .MMMMMMMMMMM.
+      .MMMMMMMMMMMMM.
+      MMMMMMMMMMMMMMM
+      MMMMMMMMMMMMMMM
+      MMMMMMMMMMMMMMM
+      .MMMMMMMMMMMMM.
+       .MMMMMMMMMMM.
+         'MMMMMMM'
+            MMM
+          .MMMMM.
+        .MMMMMMMMM.
+      .MMMMMMMMMMMMM.
+`}
+      </pre>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+      <div className="text-[8px] font-mono text-teal-500/40 text-center mt-2 uppercase tracking-[0.2em]">
+         [ P_LOAD_USER_IMG ]
+      </div>
     </div>
   )
 }
-

@@ -1,8 +1,12 @@
-import { Mail, Phone, MapPin, ExternalLink, Globe } from "lucide-react"
+"use client"
+
+import { Mail, Phone, Globe, ExternalLink } from "lucide-react"
 import { useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export function ContactSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
   const [data, setData] = useState<any>(null)
+  const [visibleItems, setVisibleLines] = useState(0)
 
   useEffect(() => {
     if (mode === 'terminal') {
@@ -11,14 +15,41 @@ export function ContactSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) 
     }
   }, [mode])
 
+  const contactItems = data ? [
+    { label: "EMAIL", value: data.email, href: `mailto:${data.email}` },
+    { label: "GITHUB", value: `github.com/${data.github}`, href: `https://github.com/${data.github}` },
+    { label: "LINKEDIN", value: `linkedin.com/in/${data.linkedin}`, href: `https://linkedin.com/in/${data.linkedin}` }
+  ] : []
+
+  useEffect(() => {
+    if (mode === 'terminal' && data && visibleItems < contactItems.length) {
+      const timer = setTimeout(() => {
+        setVisibleLines(prev => prev + 1)
+      }, 200)
+      return () => clearTimeout(timer)
+    }
+  }, [mode, data, visibleItems, contactItems.length])
+
   if (mode === 'terminal' && data) {
     return (
       <div className="space-y-4 font-mono">
         <p className="text-teal-500 font-bold tracking-widest text-[10px] uppercase">-- Terminal_Transmission_Channel --</p>
         <div className="space-y-2 border-l border-teal-500/20 pl-6">
-           <p><span className="text-white/40">EMAIL:</span> <a href={`mailto:${data.email}`} className="text-teal-400 underline">{data.email}</a></p>
-           <p><span className="text-white/40">GITHUB:</span> <a href={`https://github.com/${data.github}`} target="_blank" className="text-teal-400 underline">github.com/{data.github}</a></p>
-           <p><span className="text-white/40">LINKEDIN:</span> <a href={`https://linkedin.com/in/${data.linkedin}`} target="_blank" className="text-teal-400 underline">linkedin.com/in/${data.linkedin}</a></p>
+           <AnimatePresence>
+             {contactItems.slice(0, visibleItems).map((item, i) => (
+               <motion.p
+                 key={i}
+                 initial={{ opacity: 0, x: -5 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 className="min-h-[1.2rem]"
+               >
+                 <span className="text-white/40">{item.label}:</span>{" "}
+                 <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-teal-400 underline">
+                   {item.value}
+                 </a>
+               </motion.p>
+             ))}
+           </AnimatePresence>
         </div>
       </div>
     )
