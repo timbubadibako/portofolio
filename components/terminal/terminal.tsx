@@ -2,7 +2,8 @@
 
 import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
-import { TerminalIcon, X, Minus, Square } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { TerminalIcon, X, Minus, Square, Lock, ShieldAlert } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AboutSection } from "@/components/terminal/sections/about-section"
 import { EducationSection } from "@/components/terminal/sections/education-section"
@@ -12,6 +13,7 @@ import { ProjectsSection } from "@/components/terminal/sections/projects-section
 import { CertificationsSection } from "@/components/terminal/sections/certifications-section"
 import { ContactSection } from "@/components/terminal/sections/contact-section"
 import { ImageAsciiLogo } from "@/components/terminal/image-ascii-logo"
+import { GlitchText } from "@/components/inter/glitch-text"
 import { useRouter } from "next/navigation"
 
 type Command = {
@@ -21,18 +23,38 @@ type Command = {
 }
 
 const COMMAND_LIST = [
-  "about",
-  "education",
-  "skills",
-  "experience",
-  "projects",
-  "certifications",
-  "contact",
+  "reboot",
+  "cat profile.txt",
+  "yay -S pajril-stack",
+  "ls -la projects/",
+  "cat projects/stride_io_gps.md",
+  "cat projects/nexio_marketplace.md",
+  "cat projects/speech_asr_ai.md",
+  "cat background.log",
+  "cat contact.txt",
+  "startx",
+  "sudo generate",
   "clear",
-  "help",
-  "scan",
-  "render --gui",
-  "sudo"
+  "help"
+]
+
+const NAV_SHORTCUTS = [
+  { label: "Identity", cmd: "cat profile.txt" },
+  { label: "Skills", cmd: "yay -S pajril-stack" },
+  { label: "Projects", cmd: "ls -la projects/" },
+  { label: "Log", cmd: "cat background.log" },
+  { label: "Contact", cmd: "cat contact.txt" },
+  { label: "GUI", cmd: "startx" },
+]
+
+const bootMessages = [
+  "INITIALIZING KERNEL v6.8.0-DEVPORAL...",
+  "LOADING NEURAL DRIVERS...",
+  "ESTABLISHING SECURE HANDSHAKE...",
+  "SYNCING WITH SUPABASE CLUSTER...",
+  "DECRYPTING PORTFOLIO MANIFEST...",
+  "STARTING CLI_DAEMON...",
+  "READY FOR NEURAL INPUT.",
 ]
 
 export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui' | 'terminal' | 'inter') => void }) {
@@ -42,6 +64,8 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [currentSection, setCurrentSection] = useState<string | null>(null)
   const [ghostText, setGhostText] = useState("")
+  const [isBooting, setIsBooting] = useState(true)
+  const [bootMsgIndex, setBootMsgIndex] = useState(0)
   
   // sudo state
   const [isAwaitingPassword, setIsAwaitingPassword] = useState(false)
@@ -56,34 +80,52 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
     }
   }, [])
 
+  // Unified Booting Logic inside Terminal Window
   useEffect(() => {
-    inputRef.current?.focus()
-    const handleClick = () => inputRef.current?.focus()
-    document.addEventListener("click", handleClick)
+    if (isBooting) {
+      if (bootMsgIndex < bootMessages.length) {
+        const timer = setTimeout(() => {
+          setBootMsgIndex(prev => prev + 1)
+        }, 200)
+        return () => clearTimeout(timer)
+      } else {
+        const finalizeTimer = setTimeout(() => {
+          setIsBooting(false)
+          // Add first history item
+          setCommandHistory([
+            {
+              input: "system_init",
+              output: (
+                <div className="space-y-4">
+                  <ImageAsciiLogo />
+                  <div className="font-vt323 text-teal-500 text-lg terminal-text-glow leading-tight animate-in fade-in slide-in-from-left duration-1000">
+                    <p>[SYSTEM ONLINE]</p>
+                    <p>Welcome to PAJRIL_SH v1.1.0. Authorized access only.</p>
+                    <p>Type <span className="text-white font-bold underline cursor-pointer" onClick={() => { setInput('help'); }}>help</span> to view available system commands.</p>
+                  </div>
+                </div>
+              ),
+              timestamp: new Date(),
+            },
+          ])
+        }, 500)
+        return () => clearTimeout(finalizeTimer)
+      }
+    }
+  }, [isBooting, bootMsgIndex])
 
-    setCommandHistory([
-      {
-        input: "boot",
-        output: (
-          <div className="space-y-4">
-            <ImageAsciiLogo />
-            <div className="font-vt323 text-teal-500 text-lg terminal-text-glow leading-tight animate-in fade-in slide-in-from-left duration-1000">
-              <p>[SYSTEM BOOT SUCCESSFUL]</p>
-              <p>Welcome to the DevPortal v1.0.4. Authorized access only.</p>
-              <p>Type <span className="text-white font-bold underline cursor-pointer" onClick={() => { setInput('help'); }}>help</span> to view available system commands.</p>
-            </div>
-          </div>
-        ),
-        timestamp: new Date(),
-      },
-    ])
-
-    return () => document.removeEventListener("click", handleClick)
-  }, [])
+  useEffect(() => {
+    if (!isBooting) {
+      inputRef.current?.focus()
+      const handleClick = () => inputRef.current?.focus()
+      document.addEventListener("click", handleClick)
+      return () => document.removeEventListener("click", handleClick)
+    }
+  }, [isBooting])
 
   useEffect(() => {
     scrollToBottom()
-  }, [commandHistory, currentSection, scrollToBottom])
+  }, [commandHistory, isBooting, bootMsgIndex, currentSection, scrollToBottom])
 
   useEffect(() => {
     if (input.trim() && !isAwaitingPassword) {
@@ -100,6 +142,7 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault()
+    if (isBooting) return
 
     const rawInput = input.trim()
     if (!rawInput) return
@@ -110,25 +153,35 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
     }
 
     const commandToProcess = rawInput.toLowerCase()
-    
-    // Check for sudo
+    let output: React.ReactNode
+
+    if (commandToProcess === 'reboot') {
+      window.location.reload()
+      return
+    }
+
+    if (commandToProcess === 'startx' && onModeSwitch) {
+      setCommandHistory(prev => [...prev, {
+        input: 'startx',
+        output: <p className="text-teal-400 animate-pulse">Initializing X Server... Glitch detected... Launching GUI Mode.</p>,
+        timestamp: new Date()
+      }])
+      setTimeout(() => {
+        onModeSwitch('gui')
+      }, 1000)
+      setInput("")
+      return
+    }
+
     if (commandToProcess.startsWith('sudo ')) {
       const target = commandToProcess.split(' ')[1]
       setSudoCommand(target)
       setIsAwaitingPassword(true)
       setCommandHistory(prev => [...prev, {
         input: commandToProcess,
-        output: <p className="text-white font-bold">Password for guest:</p>,
+        output: <p className="text-white font-bold flex items-center gap-2 mt-2"><Lock className="h-3.5 w-3.5 text-teal-500" /> [AUTHENTICATION_REQUIRED] Password for root:</p>,
         timestamp: new Date()
       }])
-      setInput("")
-      return
-    }
-
-    let output: React.ReactNode
-
-    if (commandToProcess === 'render --gui' && onModeSwitch) {
-      onModeSwitch('gui')
       setInput("")
       return
     }
@@ -136,13 +189,13 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
     switch (commandToProcess) {
       case "help":
         output = (
-          <div className="space-y-2 text-teal-500 font-vt323 text-base terminal-text-glow">
-            <p className="font-bold text-white uppercase tracking-widest">[ Available Commands ]</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+          <div className="space-y-4 text-teal-500 font-vt323 text-base terminal-text-glow">
+            <p className="font-bold text-white uppercase tracking-widest border-b border-teal-500/20 pb-2">[ Available Commands ]</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
               {COMMAND_LIST.map(cmd => (
-                <div key={cmd} className="flex justify-between border-b border-teal-500/10 pb-1">
-                  <span className="text-white font-bold">{cmd}</span>
-                  <span className="text-teal-500/60 text-xs uppercase tracking-tighter">Ready</span>
+                <div key={cmd} className="flex justify-between border-b border-teal-500/5 pb-1 group cursor-pointer" onClick={() => setInput(cmd)}>
+                  <span className="text-white font-bold group-hover:text-teal-400 transition-colors uppercase tracking-tight">{cmd}</span>
+                  <span className="text-teal-500/40 text-[10px] uppercase tracking-tighter self-center">Ready</span>
                 </div>
               ))}
             </div>
@@ -151,13 +204,56 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
         setCurrentSection(null)
         break
 
-      case "about": output = <AboutSection />; setCurrentSection("about"); break
-      case "education": output = <EducationSection />; setCurrentSection("education"); break
-      case "skills": output = <SkillsSection />; setCurrentSection("skills"); break
-      case "experience": output = <ExperienceSection />; setCurrentSection("experience"); break
-      case "projects": output = <ProjectsSection />; setCurrentSection("projects"); break
-      case "certifications": output = <CertificationsSection />; setCurrentSection("certifications"); break
-      case "contact": output = <ContactSection />; setCurrentSection("contact"); break
+      case "cat profile.txt": 
+        output = <AboutSection mode="terminal" />
+        setCurrentSection("profile")
+        break
+
+      case "yay -s pajril-stack":
+        output = <SkillsSection mode="terminal" />
+        setCurrentSection("skills")
+        break
+
+      case "ls -la projects/":
+        output = (
+          <div className="space-y-3 font-mono text-sm">
+            <p className="text-white/40">drwxr-xr-x  2 pajril users  4096 May 31 00:00 .</p>
+            <p className="text-white/40">drwxr-xr-x 12 pajril users  4096 May 31 00:00 ..</p>
+            <div className="space-y-1">
+              <p className="text-teal-400 group cursor-pointer" onClick={() => setInput("cat projects/stride_io_gps.md")}>-rw-r--r--  1 pajril users  2048 May 31 00:00 stride_io_gps.md</p>
+              <p className="text-teal-400 group cursor-pointer" onClick={() => setInput("cat projects/nexio_marketplace.md")}>-rw-r--r--  1 pajril users  2048 May 31 00:00 nexio_marketplace.md</p>
+              <p className="text-teal-400 group cursor-pointer" onClick={() => setInput("cat projects/speech_asr_ai.md")}>-rw-r--r--  1 pajril users  2048 May 31 00:00 speech_asr_ai.md</p>
+            </div>
+            <p className="mt-4 text-[10px] text-teal-500/40 uppercase tracking-widest animate-pulse">
+              HINT: Type 'cat projects/[name].md' to read file contents.
+            </p>
+          </div>
+        )
+        setCurrentSection("projects")
+        break
+
+      case "cat projects/stride_io_gps.md":
+      case "cat projects/nexio_marketplace.md":
+      case "cat projects/speech_asr_ai.md":
+        output = <ProjectsSection filter={commandToProcess.split('/').pop()?.replace('.md', '')} mode="terminal" />
+        setCurrentSection("projects")
+        break
+
+      case "cat background.log":
+        output = (
+          <div className="space-y-8">
+            <ExperienceSection mode="terminal" />
+            <EducationSection mode="terminal" />
+            <CertificationsSection mode="terminal" />
+          </div>
+        )
+        setCurrentSection("background")
+        break
+
+      case "cat contact.txt":
+        output = <ContactSection mode="terminal" />
+        setCurrentSection("contact")
+        break
 
       case "clear":
         setCommandHistory([])
@@ -165,35 +261,12 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
         setInput("")
         return
 
-      case "scan":
-        output = (
-          <div className="space-y-2 text-teal-500 font-vt323">
-            <p className="animate-pulse">Initializing deep sector scan...</p>
-            <pre className="text-xs my-2 text-teal-500/40">
-              {`
-[0.00s] PING root.devportal.v1
-[0.12s] RECV 64 bytes from 127.0.0.1
-[0.25s] SCANNING /usr/bin/portfolios...
-[0.45s] INTEGRITY CHECK: OK
-[0.60s] NEURAL DECORATOR: ONLINE
-`}
-            </pre>
-            <p className="text-green-500 font-bold">SYSTEM SECURE. ALL SIGNALS OPTIMAL.</p>
-          </div>
-        )
-        setCurrentSection(null)
-        break
-      
-      case "sudo":
-        output = <p className="text-white/40 italic">Usage: sudo [command]</p>
-        setCurrentSection(null)
-        break
-
       default:
         output = (
-          <p className="text-red-500 font-vt323">
-            ERROR: Command &apos;{commandToProcess}&apos; not found. Type &apos;help&apos; for assistance.
-          </p>
+          <div className="text-red-500 font-vt323">
+            <GlitchText text={`ERROR: Command '${commandToProcess}' not found.`} intensity="high" /> 
+            <p className="mt-1">Type &apos;help&apos; for assistance.</p>
+          </div>
         )
         setCurrentSection(null)
     }
@@ -212,34 +285,27 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
   }
 
   const handlePasswordSubmit = (pass: string) => {
-    if (pass === "timbubadibako") {
+    if (pass === "smallproblems") {
       setCommandHistory(prev => [...prev, {
-        input: "*******",
-        output: <p className="text-green-500 font-bold tracking-widest">[ AUTHENTICATION SUCCESSFUL ]</p>,
+        input: "********",
+        output: <p className="text-green-500 font-bold tracking-[0.5em] mt-2 animate-pulse">[ ACCESS_GRANTED ]</p>,
         timestamp: new Date()
       }])
       
-      // Execute the actual sudo command
-      if (sudoCommand === "scaffold" || sudoCommand === "builder") {
-        setCommandHistory(prev => [...prev, {
-          input: "system",
-          output: <p className="text-teal-400 animate-pulse">Launching Scaffolding Hub Interface...</p>,
-          timestamp: new Date()
-        }])
+      if (sudoCommand === "generate" || sudoCommand === "scaffold" || sudoCommand === "builder") {
         setTimeout(() => {
            router.push('/scaffold')
-        }, 1500)
-      } else {
-        setCommandHistory(prev => [...prev, {
-          input: "system",
-          output: <p className="text-white/40">Command &apos;{sudoCommand}&apos; authorized but not mapped to a GUI component.</p>,
-          timestamp: new Date()
-        }])
+        }, 1000)
       }
     } else {
       setCommandHistory(prev => [...prev, {
-        input: "*******",
-        output: <p className="text-red-500 font-bold">sudo: 1 incorrect password attempt</p>,
+        input: "********",
+        output: (
+          <div className="text-red-500 font-bold mt-2 space-y-1">
+             <GlitchText text="[ ACCESS_DENIED ]" intensity="high" />
+             <p className="text-[10px] uppercase flex items-center gap-2"><ShieldAlert className="h-3 w-3" /> sudo: 1 incorrect password attempt</p>
+          </div>
+        ),
         timestamp: new Date()
       }])
     }
@@ -274,49 +340,83 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden border border-teal-500/20 rounded-2xl bg-black/80 backdrop-blur-xl shadow-[0_0_50px_-12px_rgba(20,184,166,0.3)]">
+    <div className="flex flex-col h-full overflow-hidden border border-teal-500/30 bg-black/80 backdrop-blur-2xl relative">
+      {/* Corner Accents */}
+      <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-teal-500/50 z-20" />
+      <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-teal-500/50 z-20" />
+      <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-teal-500/50 z-20" />
+      <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-teal-500/50 z-20" />
+
       {/* Header Bar */}
-      <div className="bg-teal-500/10 border-b border-teal-500/30 p-4 flex items-center justify-between">
+      <div className="bg-teal-500/5 border-b border-teal-500/20 p-3 md:p-4 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-3">
-          <div className="flex gap-2 mr-4">
-             <div className="w-3 h-3 rounded-full bg-red-500/40 border border-red-500/60 cursor-pointer hover:bg-red-500/80 transition-colors flex items-center justify-center group"><X className="h-2 w-2 opacity-0 group-hover:opacity-100" /></div>
-             <div className="w-3 h-3 rounded-full bg-amber-500/40 border border-amber-500/60 cursor-pointer hover:bg-amber-500/80 transition-colors flex items-center justify-center group"><Minus className="h-2 w-2 opacity-0 group-hover:opacity-100" /></div>
-             <div className="w-3 h-3 rounded-full bg-emerald-500/40 border border-emerald-500/60 cursor-pointer hover:bg-emerald-500/80 transition-colors flex items-center justify-center group"><Square className="h-2 w-2 opacity-0 group-hover:opacity-100" /></div>
+          <div className="flex gap-1.5 mr-3 md:mr-6">
+             <div className="w-3 h-3 bg-red-500/30 border border-red-500/50 cursor-pointer hover:bg-red-500/70 transition-colors flex items-center justify-center group"><X className="h-2 w-2 opacity-0 group-hover:opacity-100 text-white" /></div>
+             <div className="w-3 h-3 bg-amber-500/30 border border-amber-500/50 cursor-pointer hover:bg-amber-500/70 transition-colors flex items-center justify-center group"><Minus className="h-2 w-2 opacity-0 group-hover:opacity-100 text-white" /></div>
+             <div className="w-3 h-3 bg-emerald-500/30 border border-emerald-500/50 cursor-pointer hover:bg-emerald-500/70 transition-colors flex items-center justify-center group"><Square className="h-2 w-2 opacity-0 group-hover:opacity-100 text-white" /></div>
           </div>
-          <TerminalIcon className="h-4 w-4 text-teal-400" />
-          <span className="text-[10px] md:text-xs font-mono text-teal-400/60 uppercase tracking-[0.2em] font-bold">
-            SESSION_ROOT // GUEST@DEVPORAL {currentSection ? `:: /${currentSection}` : ":: ~"}
+          <TerminalIcon className="h-4 w-4 text-teal-500" />
+          <span className="text-[10px] md:text-xs font-mono text-teal-500/80 uppercase tracking-[0.3em] font-bold">
+            archnemesis: ~/zshrc
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-4">
-           <div className="h-1.5 w-1.5 rounded-full bg-teal-500 animate-pulse" />
-           <span className="text-[9px] font-mono text-teal-500/40 uppercase tracking-widest">Signal: Stable</span>
+           <div className="h-1 w-1 bg-teal-500 animate-pulse shadow-[0_0_8px_rgba(20,184,166,1)]" />
+           <span className="text-[9px] font-mono text-teal-500/40 uppercase tracking-[0.4em] font-bold">guest@archnemesis</span>
         </div>
       </div>
 
       {/* History Window */}
       <div 
         ref={terminalRef} 
-        className="flex-1 p-8 overflow-y-auto custom-scrollbar relative"
+        className="flex-1 p-0 overflow-y-auto custom-scrollbar relative bg-black/20 flex flex-col"
       >
-        {commandHistory.map((cmd, index) => (
-          <div key={index} className="mb-8 last:mb-0">
-            {cmd.input !== "boot" && (
-              <div className="flex items-center text-teal-500/30 font-mono text-[10px] mb-2 uppercase tracking-widest">
-                <span className="text-teal-400 mr-3 font-bold">$</span>
-                <span>{cmd.input}</span>
-                <span className="ml-auto text-[8px] opacity-50">{cmd.timestamp.toLocaleTimeString()}</span>
-              </div>
-            )}
-            <div className="mt-1">{cmd.output}</div>
-          </div>
-        ))}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02] z-0" style={{ backgroundImage: 'radial-gradient(circle, #14b8a6 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
+        <div className="relative z-10 flex-1 flex flex-col">
+           {isBooting ? (
+             <div className="w-full h-full flex flex-col items-center justify-center relative bg-black/40">
+                <div className="relative z-10 space-y-8 w-full max-w-3xl px-8">
+                   <ImageAsciiLogo />
+                   <div className="space-y-1.5 border-l-2 border-teal-500/20 pl-6">
+                      {bootMessages.slice(0, bootMsgIndex).map((message, index) => (
+                        <div key={index} className="flex text-[10px] md:text-xs tracking-widest uppercase font-vt323 text-teal-400/80">
+                          <span className="text-teal-500 font-bold mr-4">[{index.toString().padStart(2, '0')}]</span>
+                          <span className="terminal-text-glow">{message}</span>
+                          {index === bootMsgIndex - 1 && (
+                            <span className="ml-2 h-4 w-2 bg-teal-500 animate-pulse" />
+                          )}
+                        </div>
+                      ))}
+                   </div>
+                </div>
+             </div>
+           ) : (
+             <div className="relative z-10 p-4 md:p-8">
+               {commandHistory.map((cmd, index) => (
+                 <div key={index} className="mb-8 last:mb-0">
+                   {cmd.input !== "system_init" && (
+                     <div className="flex items-center text-teal-500/40 font-mono text-[10px] mb-3 uppercase tracking-[0.2em] border-l border-teal-500/20 pl-4">
+                       <span className="text-teal-500 mr-3 font-bold">❯</span>
+                       <span className="text-white/80">{cmd.input}</span>
+                       <span className="ml-auto text-[8px] opacity-30 font-bold">{cmd.timestamp.toLocaleTimeString()}</span>
+                     </div>
+                   )}
+                   <div className="mt-2">{cmd.output}</div>
+                 </div>
+               ))}
+             </div>
+           )}
+        </div>
       </div>
 
       {/* Input Bar */}
-      <div className="bg-black/40 border-t border-teal-500/10 p-6">
+      <div className={cn(
+        "bg-teal-500/5 border-t border-teal-500/10 p-4 md:p-6 relative z-10 transition-opacity duration-500",
+        isBooting ? "opacity-0 pointer-events-none" : "opacity-100"
+      )}>
         <form onSubmit={handleSubmit} className="flex items-center group">
-          <span className="text-teal-400 font-bold mr-4 text-lg animate-pulse">❯</span>
+          <span className="text-teal-500 font-black mr-4 text-lg animate-pulse">❯</span>
           <div className="relative flex-1">
             {ghostText && (
               <span className="absolute top-0 left-0 text-teal-900 font-mono text-base pointer-events-none tracking-tight">
@@ -340,23 +440,22 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
       </div>
 
       {/* Quick Access Nav */}
-      <div className="px-6 pb-6 pt-2 flex flex-wrap justify-center gap-2 overflow-x-auto no-scrollbar">
-        {COMMAND_LIST.slice(0, 9).map((cmd) => (
+      <div className={cn(
+        "px-4 md:px-6 pb-4 md:pb-6 pt-2 flex flex-wrap justify-center gap-2 overflow-x-auto no-scrollbar relative z-10 transition-opacity duration-500",
+        isBooting ? "opacity-0 pointer-events-none" : "opacity-100"
+      )}>
+        {NAV_SHORTCUTS.map((shortcut) => (
           <Button
-            key={cmd}
+            key={shortcut.label}
             variant="outline"
             size="sm"
             onClick={() => {
-              setInput(cmd)
-              setTimeout(() => {
-                const fakeEvent = { preventDefault: () => {} } as React.FormEvent
-                handleSubmit(fakeEvent)
-                inputRef.current?.focus()
-              }, 50)
+              setInput(shortcut.cmd)
+              inputRef.current?.focus()
             }}
-            className="text-[9px] uppercase font-mono bg-teal-500/5 hover:bg-teal-500/20 text-teal-400 border-teal-500/10 h-7 px-3 rounded-lg backdrop-blur-md"
+            className="text-[9px] uppercase font-mono bg-black hover:bg-teal-500 hover:text-black text-teal-500 border-teal-500/20 h-7 px-4 rounded-none transition-all duration-300 font-bold tracking-widest"
           >
-            {cmd}
+            {shortcut.label}
           </Button>
         ))}
       </div>

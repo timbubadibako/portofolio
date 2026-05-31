@@ -1,0 +1,101 @@
+[
+  {
+    "id": 11,
+    "type": "certification",
+    "tag": "CERTIFICATION",
+    "title": "AI Engineer Learning Path",
+    "subtitle": "DBS Foundation x Dicoding",
+    "period": "Jan 2026 - Apr 2026",
+    "icon": "award"
+  },
+  {
+    "id": 10,
+    "type": "certification",
+    "tag": "CERTIFICATION",
+    "title": "Introduction to Cybersecurity",
+    "subtitle": "Cisco",
+    "period": "Jan 2026",
+    "icon": "award"
+  },
+  {
+    "id": 9,
+    "type": "experience",
+    "tag": "WORK_EXPERIENCE",
+    "title": "Asisten Laboratorium Praktikum",
+    "subtitle": "Universitas Kuningan (UNIKU)",
+    "period": "Oct 2025 - Jan 2026",
+    "icon": "briefcase"
+  },
+  {
+    "id": 8,
+    "type": "experience",
+    "tag": "WORK_EXPERIENCE",
+    "title": "Pengurus Himpunan Mahasiswa (HIMA TI)",
+    "subtitle": "Universitas Kuningan (UNIKU)",
+    "period": "Feb 2025 - Jan 2026",
+    "icon": "users"
+  },
+  {
+    "id": 7,
+    "type": "certification",
+    "tag": "CERTIFICATION",
+    "title": "Cybersecurity & Android Developer",
+    "subtitle": "IDCamp",
+    "period": "2025",
+    "icon": "award"
+  },
+  {
+    "id": 6,
+    "type": "certification",
+    "tag": "CERTIFICATION",
+    "title": "Junior Web Developer",
+    "subtitle": "Penyelenggara Sertifikasi",
+    "period": "2024",
+    "icon": "award"
+  },
+  {
+    "id": 5,
+    "type": "experience",
+    "tag": "WORK_EXPERIENCE",
+    "title": "Pengurus Himpunan Mahasiswa (HIMA TI)",
+    "subtitle": "Universitas Kuningan (UNIKU)",
+    "period": "Feb 2024 - Jan 2025",
+    "icon": "users"
+  },
+  {
+    "id": 4,
+    "type": "certification",
+    "tag": "CERTIFICATION",
+    "title": "Junior Network Administrator",
+    "subtitle": "VSGA Kominfo",
+    "period": "Aug 2024 - Sep 2024",
+    "icon": "award"
+  },
+  {
+    "id": 3,
+    "type": "education",
+    "tag": "EDUCATION",
+    "title": "S1 Teknik Informatika",
+    "subtitle": "Universitas Kuningan (UNIKU)",
+    "period": "Sep 2023 - PRESENT",
+    "icon": "graduation-cap"
+  },
+  {
+    "id": 2,
+    "type": "experience",
+    "tag": "WORK_EXPERIENCE",
+    "title": "IT Infrastructure Assistant",
+    "subtitle": "CV Alfa Digital Technology",
+    "period": "Jan 2023 - Feb 2023",
+    "icon": "briefcase"
+  },
+  {
+    "id": 1,
+    "type": "education",
+    "tag": "EDUCATION",
+    "title": "Computer and Network Engineering",
+    "subtitle": "SMK Al-Shighor",
+    "period": "Jun 2021 - Jun 2023",
+    "icon": "graduation-cap"
+  }
+]

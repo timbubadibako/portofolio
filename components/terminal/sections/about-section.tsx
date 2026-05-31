@@ -1,52 +1,78 @@
 "use client"
 
-import { AsciiArt } from "@/components/terminal/ascii-art"
 import { AsciiPortraitComparison } from "@/components/terminal/ascii-portrait-comparison"
+import { useEffect, useState } from "react"
 
-export function AboutSection() {
+export function AboutSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
+  const [data, setData] = useState<any>(null)
+
+  useEffect(() => {
+    if (mode === 'terminal') {
+      const termData = require('@/lib/data/terminal_data.json')
+      setData(termData.profile)
+    }
+  }, [mode])
+
+  if (mode === 'terminal' && data) {
+    return (
+      <div className="space-y-6 font-mono">
+         <div className="bg-teal-500/5 border border-teal-500/20 p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 text-[8px] text-teal-500/20 uppercase tracking-widest">profile.yaml</div>
+            <pre className="text-xs md:text-sm text-teal-400 leading-relaxed whitespace-pre-wrap">
+{`identity:
+  name: ${data.identity.name}
+  alias: ${data.identity.alias}
+  role: ${data.identity.role}
+  location: ${data.identity.location}
+
+status:
+  academic: ${data.status.academic}
+  specialty: ${data.status.specialty}
+
+philosophy: >
+  Small problems are still problems.`}
+            </pre>
+         </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      <AsciiArt art="about" />
-
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="md:w-2/5">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row gap-12 items-center md:items-start">
+        <div className="md:w-1/3">
           <AsciiPortraitComparison />
-          <div className="text-center font-mono text-[10px] text-teal-500/60 mt-4 uppercase tracking-[0.2em]">
-            Subject: JRILYM
-            <br />
-            Status: FULLSTACK_ARCHITECT
+          <div className="text-center font-mono text-[9px] text-teal-500/40 mt-4 uppercase tracking-[0.3em]">
+            Biometric_Scan: Verified <br />
+            ID: 0xPAJRIL_ARCH
           </div>
         </div>
 
-        <div className="space-y-4 md:w-3/5 font-mono text-sm leading-relaxed text-teal-500/80">
-          <p>
-            System Architect and Fullstack Developer specialized in creating high-integrity digital environments.
-            My focus lies at the intersection of performance, security, and human-machine interaction.
-          </p>
+        <div className="md:w-2/3 space-y-6">
+          <div className="bg-teal-500/5 border border-teal-500/20 p-6 relative overflow-hidden font-mono">
+             <div className="absolute top-0 right-0 p-2 text-[8px] text-teal-500/20 uppercase tracking-widest">profile.yaml</div>
+             <pre className="text-xs md:text-sm text-teal-400 leading-relaxed whitespace-pre-wrap">
+{`identity:
+  name: SYIFA PAJRIL YAUM
+  alias: PAJRIL
+  role: AI & Fullstack Developer
+  location: Kuningan, West Java
 
-          <div className="p-4 border border-teal-500/20 rounded-xl bg-teal-500/5 backdrop-blur-md">
-            <h3 className="text-teal-400 font-bold mb-3 uppercase tracking-widest text-xs">[ Core_Philosophy ]</h3>
-            <div className="space-y-3 text-xs opacity-90">
-              <p>
-                &gt; I approach every "impossible" constraint as a missing driver. 
-                Optimization is not a task; it is a fundamental system requirement.
-              </p>
-              <p>
-                &gt; Driven by the "Defender Mindset" — whether on a football pitch or protecting enterprise endpoints, 
-                maintaining system integrity is my primary objective.
-              </p>
-            </div>
-          </div>
+status:
+  academic: Undergraduate @ UNIKU
+  specialty: Neural Systems & Cloud Security
 
-          <div className="grid grid-cols-2 gap-4">
-             <div className="p-3 border border-teal-500/10 rounded-lg bg-black/40">
-                <h4 className="text-[10px] text-teal-500/40 uppercase mb-1 font-bold">Specialty</h4>
-                <p className="text-xs text-teal-400 font-bold">Neural Interfacing</p>
-             </div>
-             <div className="p-3 border border-teal-500/10 rounded-lg bg-black/40">
-                <h4 className="text-[10px] text-teal-500/40 uppercase mb-1 font-bold">Deployment</h4>
-                <p className="text-xs text-teal-400 font-bold">Cloud_Native</p>
-             </div>
+off_screen_log:
+  os: Arch Linux (btw)
+  editor: Neovim / VS Code
+  physicals: 
+    - Football (Center Back)
+    - Gym (System Recovery)
+
+philosophy: >
+  Architecting solid ecosystems from 
+  fundamental infrastructure to neural execution.`}
+             </pre>
           </div>
         </div>
       </div>

@@ -1,49 +1,87 @@
-import { AsciiArt } from "@/components/terminal/ascii-art"
-import { Mail, Phone, MapPin, ExternalLink } from "lucide-react"
+import { Mail, Phone, MapPin, ExternalLink, Globe } from "lucide-react"
+import { useEffect, useState } from "react"
 
-export function ContactSection() {
-  return (
-    <div className="space-y-4">
-      <AsciiArt art="contact" />
+export function ContactSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
+  const [data, setData] = useState<any>(null)
 
-      <div className="space-y-6">
-        <div className="flex flex-col gap-3">
-          <a
-            href="mailto:sathiyamurthygokul@gmail.com"
-            className="flex items-center text-sm hover:text-primary transition-colors"
-          >
-            <Mail className="h-4 w-4 mr-2 text-primary" />
-            sathiyamurthygokul@gmail.com
-          </a>
-          <a href="tel:5513581893" className="flex items-center text-sm hover:text-primary transition-colors">
-            <Phone className="h-4 w-4 mr-2 text-primary" />
-            551-358-1893
-          </a>
-          <div className="flex items-center text-sm">
-            <MapPin className="h-4 w-4 mr-2 text-primary" />
-            New York, NY 10038
-          </div>
-          <a
-            href="https://www.linkedin.com/in/gokulsathiyamurthy088/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center text-sm hover:text-primary transition-colors"
-          >
-            <ExternalLink className="h-4 w-4 mr-2 text-primary" />
-            linkedin.com/in/gokulsathiyamurthy088
-          </a>
-          <a
-            href="https://github.com/gokulsatya"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center text-sm hover:text-primary transition-colors"
-          >
-            <ExternalLink className="h-4 w-4 mr-2 text-primary" />
-            github.com/gokulsatya
-          </a>
+  useEffect(() => {
+    if (mode === 'terminal') {
+      const termData = require('@/lib/data/terminal_data.json')
+      setData(termData.contact)
+    }
+  }, [mode])
+
+  if (mode === 'terminal' && data) {
+    return (
+      <div className="space-y-4 font-mono">
+        <p className="text-teal-500 font-bold tracking-widest text-[10px] uppercase">-- Terminal_Transmission_Channel --</p>
+        <div className="space-y-2 border-l border-teal-500/20 pl-6">
+           <p><span className="text-white/40">EMAIL:</span> <a href={`mailto:${data.email}`} className="text-teal-400 underline">{data.email}</a></p>
+           <p><span className="text-white/40">GITHUB:</span> <a href={`https://github.com/${data.github}`} target="_blank" className="text-teal-400 underline">github.com/{data.github}</a></p>
+           <p><span className="text-white/40">LINKEDIN:</span> <a href={`https://linkedin.com/in/${data.linkedin}`} target="_blank" className="text-teal-400 underline">linkedin.com/in/${data.linkedin}</a></p>
         </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6 font-mono">
+      <pre className="text-[10px] md:text-xs text-teal-500/60 leading-none">
+{`
++-------------------------------------------------------------+
+|                                                             |
+|   CONTACT_CHANNELS // SECURE_TRANSMISSION_PROTOCOL          |
+|                                                             |
++-------------------------------------------------------------+
+`}
+      </pre>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pl-4 border-l border-teal-500/20">
+        <ContactItem 
+          label="EMAIL"
+          value="pjrlywm@gmail.com"
+          href="mailto:pjrlywm@gmail.com"
+        />
+        <ContactItem 
+          label="PHONE"
+          value="+62 XXX-XXXX-XXXX"
+          href="tel:0"
+        />
+        <ContactItem 
+          label="GITHUB"
+          value="github.com/timbubadibako"
+          href="https://github.com/timbubadibako"
+        />
+        <ContactItem 
+          label="LINKEDIN"
+          value="linkedin.com/in/syifa-pajril-yaum-730162264/"
+          href="https://www.linkedin.com/in/syifa-pajril-yaum-730162264/"
+        />
+      </div>
+
+      <div className="pt-4 mt-6 border-t border-teal-500/10">
+         <p className="text-[10px] text-teal-500/40 uppercase tracking-[0.4em]">
+           Awaiting incoming signals...
+         </p>
       </div>
     </div>
   )
 }
 
+function ContactItem({ label, value, href }: { label: string; value: string; href: string }) {
+  return (
+    <div className="space-y-1 group">
+      <span className="text-[9px] text-teal-500 font-bold tracking-widest uppercase opacity-40 group-hover:opacity-100 transition-opacity">
+        {label}:
+      </span>
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="block text-sm text-white group-hover:text-teal-400 transition-colors underline decoration-teal-500/20 underline-offset-4"
+      >
+        {value}
+      </a>
+    </div>
+  )
+}

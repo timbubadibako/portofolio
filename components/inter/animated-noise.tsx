@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useRef } from "react"
 
 export function AnimatedNoise({ opacity = 0.05 }: { opacity?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -12,44 +12,37 @@ export function AnimatedNoise({ opacity = 0.05 }: { opacity?: number }) {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    let animationFrameId: number
+    // Create a small noise tile
+    const size = 128
+    canvas.width = size
+    canvas.height = size
+    
+    const imageData = ctx.createImageData(size, size)
+    const data = imageData.data
 
-    const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+    for (let i = 0; i < data.length; i += 4) {
+      const val = Math.random() * 255
+      data[i] = val
+      data[i + 1] = val
+      data[i + 2] = val
+      data[i + 3] = 255
     }
 
-    const render = () => {
-      const imageData = ctx.createImageData(canvas.width, canvas.height)
-      const data = imageData.data
-
-      for (let i = 0; i < data.length; i += 4) {
-        const val = Math.random() * 255
-        data[i] = val
-        data[i + 1] = val
-        data[i + 2] = val
-        data[i + 3] = 255
-      }
-
-      ctx.putImageData(imageData, 0, 0)
-      animationFrameId = requestAnimationFrame(render)
-    }
-
-    window.addEventListener("resize", resize)
-    resize()
-    render()
-
-    return () => {
-      window.removeEventListener("resize", resize)
-      cancelAnimationFrame(animationFrameId)
-    }
+    ctx.putImageData(imageData, 0, 0)
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[600] mix-blend-overlay transition-opacity duration-1000"
+    <div 
+      className="fixed inset-0 pointer-events-none z-[600] mix-blend-overlay overflow-hidden"
       style={{ opacity }}
-    />
+    >
+      <canvas
+        ref={canvasRef}
+        className="absolute w-[200%] h-[200%] -top-1/2 -left-1/2 animate-noise-drift"
+        style={{ 
+          imageRendering: 'pixelated',
+        }}
+      />
+    </div>
   )
 }

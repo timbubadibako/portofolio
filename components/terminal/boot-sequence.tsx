@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { ImageAsciiLogo } from "./image-ascii-logo"
 
 const bootMessages = [
@@ -14,27 +13,17 @@ const bootMessages = [
 ]
 
 export default function BootSequence() {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
-
-  useEffect(() => {
-    if (currentMessageIndex < bootMessages.length) {
-      const timer = setTimeout(() => {
-        setCurrentMessageIndex((prev) => prev + 1)
-      }, 300)
-      return () => clearTimeout(timer)
-    }
-  }, [currentMessageIndex])
+  const currentMessageIndex = bootMessages.length // Show all as it's now embedded and timed by Terminal
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <div className="w-full max-w-3xl p-12 rounded-[2rem] border border-teal-500/10 bg-black/40 backdrop-blur-xl font-mono relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent pointer-events-none" />
-        
-        <div className="relative z-10 space-y-8">
+    <div className="w-full h-full flex flex-col items-center justify-center relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/[0.02] to-transparent pointer-events-none" />
+      
+      <div className="relative z-10 space-y-8 w-full max-w-3xl">
            <ImageAsciiLogo />
 
            <div className="space-y-1.5 border-l-2 border-teal-500/20 pl-6">
-              {bootMessages.slice(0, currentMessageIndex).map((message, index) => (
+              {bootMessages.map((message, index) => (
                 <div key={index} className="flex text-xs md:text-sm tracking-widest uppercase font-vt323 text-teal-400/80">
                   <span className="text-teal-500 font-bold mr-4">[{index.toString().padStart(2, '0')}]</span>
                   <span className="terminal-text-glow">{message}</span>
@@ -44,7 +33,6 @@ export default function BootSequence() {
                 </div>
               ))}
            </div>
-        </div>
       </div>
     </div>
   )

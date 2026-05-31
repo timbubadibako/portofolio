@@ -41,6 +41,23 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Hide scrollbars for all containers while keeping scroll functionality */
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+  display: none !important;
 }
 
 /* CRT & Terminal Effects */
@@ -122,7 +139,7 @@ body {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(20, 184, 166, 0.2);
-  border-radius: 2px;
+  border-radius: 0px;
 }
 
 .font-vt323 { font-family: var(--font-vt323), monospace; }
@@ -142,4 +159,57 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes noise-drift {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  20% { transform: translate(-4%, 2%); }
+  30% { transform: translate(2%, -4%); }
+  40% { transform: translate(-2%, 6%); }
+  50% { transform: translate(-4%, 2%); }
+  60% { transform: translate(6%, 0); }
+  70% { transform: translate(0, 4%); }
+  80% { transform: translate(-6%, 0); }
+  90% { transform: translate(4%, 2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.animate-noise-drift {
+  animation: noise-drift 0.2s steps(1) infinite;
+  will-change: transform;
+}
+
+/* Global Performance Fixes */
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.terminal-text-glow {
+  will-change: text-shadow;
+}
+
+/* Limit heavy filters on mobile */
+@media (max-width: 768px) {
+  .backdrop-blur-xl, .backdrop-blur-2xl, .backdrop-blur-3xl {
+    backdrop-filter: blur(8px) !important;
+  }
+}
+
+/* LCP & Paint Optimizations */
+.terminal-text-glow {
+  text-shadow: 0 0 5px rgba(20, 184, 166, 0.4); /* Reduced radius for faster paint */
+}
+
+.crt-overlay {
+  background: radial-gradient(circle, transparent 70%, rgba(0, 0, 0, 0.1) 100%);
+  /* Simplified gradients */
+}
+
+/* Force hardware acceleration for the entire terminal container */
+#terminal-root {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }

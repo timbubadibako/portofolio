@@ -1,0 +1,112 @@
+[
+  {
+    "id": "web",
+    "title": "WEB_ARCHITECTURE",
+    "icon": "workflow",
+    "path": "src/web_dev",
+    "skills": [
+      { 
+        "name": "NEXT.JS_16", 
+        "level": 98, 
+        "description": "App Router, Server Actions, Turbopack, and high-performance rendering.", 
+        "projectLink": "#projects",
+        "asciiIcon": "<N/>"
+      },
+      { 
+        "name": "TAILWIND_V4", 
+        "level": 95, 
+        "description": "Modern styling, complex theme engines, and performant CSS-in-JS alternatives.", 
+        "projectLink": "#projects",
+        "asciiIcon": "(*)#" 
+      },
+      { 
+        "name": "BACKEND_SYSTEMS", 
+        "level": 90, 
+        "description": "Prisma, Supabase, PostgreSQL, and distributed database architectures.", 
+        "projectLink": "#projects",
+        "asciiIcon": "[DB]" 
+      }
+    ]
+  },
+  {
+    "id": "mobile",
+    "title": "MOBILE_DEPLOYMENT",
+    "icon": "cpu",
+    "path": "src/mobile_dev",
+    "skills": [
+      { 
+        "name": "FLUTTER_ECOSYSTEM", 
+        "level": 94, 
+        "description": "Cross-platform mastery with Riverpod, Bloc, and native integration.", 
+        "projectLink": "#projects",
+        "asciiIcon": "{FL}"
+      },
+      { 
+        "name": "KOTLIN_ANDROID", 
+        "level": 85, 
+        "description": "Modern Android development with Jetpack Compose and Coroutines.", 
+        "asciiIcon": "[K]" 
+      },
+      { 
+        "name": "MOBILE_SECURITY", 
+        "level": 80, 
+        "description": "Root detection, certificate pinning, and secure storage implementation.",
+        "asciiIcon": "!SEC"
+      }
+    ]
+  },
+  {
+    "id": "ai",
+    "title": "AI_&_DATA_MODELS",
+    "icon": "workflow",
+    "path": "src/ai_data",
+    "skills": [
+      { 
+        "name": "NEURAL_PROMPTING", 
+        "level": 95, 
+        "description": "Advanced prompt architecture for LLMs and automated context propagation.", 
+        "projectLink": "#projects",
+        "asciiIcon": "[::]" 
+      },
+      { 
+        "name": "RAG_ARCHITECTURES", 
+        "level": 88, 
+        "description": "Vector DB integration, semantic search, and retrieval-augmented generation.", 
+        "projectLink": "#projects",
+        "asciiIcon": "/>RAG" 
+      },
+      { 
+        "name": "TRANSFORMERS", 
+        "level": 75, 
+        "description": "Fine-tuning foundational models and implementing local inference pipelines.",
+        "asciiIcon": "{FT}"
+      }
+    ]
+  },
+  {
+    "id": "infra",
+    "title": "INFRA_SECURITY",
+    "icon": "shield",
+    "path": "src/infra_sys",
+    "skills": [
+      { 
+        "name": "ARCH_LINUX_OPS", 
+        "level": 92, 
+        "description": "System administration, custom kernels, and security hardening (btw).", 
+        "asciiIcon": "#!/bin/bash"
+      },
+      { 
+        "name": "DOCKER_CONTAINERS", 
+        "level": 88, 
+        "description": "Orchestration, multi-stage builds, and microservice isolation.", 
+        "asciiIcon": "[DK]" 
+      },
+      { 
+        "name": "THREAT_HUNTING", 
+        "level": 85, 
+        "description": "EDR monitoring, incident triaging, and infrastructure auditing.",
+        "asciiIcon": "?!TH"
+      }
+    ]
+  }
+]

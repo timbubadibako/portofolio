@@ -1,156 +1,198 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { Star, GitFork, Sparkles, Zap, ShieldCheck, Code2, Search } from "lucide-react"
-import { ScrambleText } from "./scramble-text"
+import { 
+  Globe, ExternalLink, Monitor, Signal, 
+  ChevronRight, FileCode
+} from "lucide-react"
+import { GlitchText } from "./glitch-text"
+import { motion, AnimatePresence } from "framer-motion"
 
-const projects = [
-  {
-    title: "E-Commerce POS",
-    description: "Enterprise-grade Point of Sale system with offline synchronization and real-time inventory management.",
-    tech: ["Flutter", "Supabase", "PostgreSQL"],
-    link: "#",
-    stars: 124,
-    forks: 12,
-    icon: Zap,
-  },
-  {
-    title: "Neural Scaffolding",
-    description: "AI-driven project generator using Gemini & Next.js.",
-    tech: ["Next.js", "AI", "Prisma"],
-    link: "#",
-    stars: 89,
-    forks: 5,
-    icon: Sparkles,
-  },
-  {
-    title: "Cyber Security Audit",
-    description: "Automated vulnerability scanner for cloud infrastructure.",
-    tech: ["Python", "Docker", "AWS"],
-    link: "#",
-    stars: 45,
-    forks: 3,
-    icon: ShieldCheck,
-  }
-]
-
-export function ProjectsSection() {
-  return (
-    <section id="projects" className="relative py-32 pl-6 md:pl-28 pr-6 md:pr-12 bg-black min-h-screen z-10">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-           <div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-teal-500 font-bold">02 // DEPLOYMENTS</span>
-              <h2 className="mt-4 font-press-start text-3xl md:text-5xl tracking-tighter uppercase terminal-text-glow text-white">
-                <ScrambleText text="ARTIFACTS_COLLECTION" duration={1.2} />
-              </h2>
-           </div>
-           <div className="flex flex-col items-end font-mono text-[9px] text-white/20 uppercase tracking-widest text-right">
-              <span>Cluster_Node: Secure</span>
-              <span>Uptime: 2.8k_Hours</span>
-           </div>
-        </div>
-
-        {/* 
-            PRECISE BENTO LAYOUT (8x4 Logic)
-            Mapped to CSS 4-column Grid:
-            - Left Main (2x2 units): col-span-2 row-span-2
-            - Right Top (2x1 units): col-span-2 row-span-1
-            - Right Bottom Left (1x1 unit): col-span-1 row-span-1
-            - Right Bottom Right (1x1 unit): col-span-1 row-span-1 (Discover)
-        */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[280px]">
-          
-          {/* 1. PRIMARY PROJECT (LEFT 4x4) */}
-          <ProjectCard 
-            project={projects[0]} 
-            className="lg:col-span-2 lg:row-span-2" 
-          />
-
-          {/* 2. SECONDARY PROJECT (RIGHT TOP 4x2) */}
-          <ProjectCard 
-            project={projects[1]} 
-            className="lg:col-span-2 lg:row-span-1" 
-          />
-
-          {/* 3. TERTIARY PROJECT (RIGHT BOTTOM LEFT 2x2) */}
-          <ProjectCard 
-            project={projects[2]} 
-            className="lg:col-span-1 lg:row-span-1" 
-          />
-
-          {/* 4. DISCOVER MORE (RIGHT BOTTOM RIGHT 2x2) */}
-          <div className="relative group overflow-hidden rounded-[2.5rem] border-2 border-dashed border-teal-500/20 bg-teal-500/5 p-10 flex flex-col justify-center items-center transition-all duration-500 hover:border-teal-500/40 hover:bg-teal-500/10 cursor-pointer lg:col-span-1 lg:row-span-1">
-             <div className="text-center space-y-4">
-                <div className="h-12 w-12 rounded-full border border-teal-500/30 flex items-center justify-center mx-auto group-hover:bg-teal-500 group-hover:text-black transition-all duration-500">
-                   <Search className="h-5 w-5 text-teal-400 group-hover:text-inherit" />
-                </div>
-                <div>
-                   <span className="block font-press-start text-[10px] text-teal-400 uppercase tracking-tighter mb-2">
-                      EXPLORE_ALL
-                   </span>
-                   <span className="font-mono text-[9px] text-teal-500/40 uppercase tracking-widest block leading-tight">
-                      Discover more <br/> projects
-                   </span>
-                </div>
-                <div className="flex gap-1.5 justify-center opacity-40">
-                   <div className="w-1 h-1 rounded-full bg-teal-500 animate-pulse" />
-                   <div className="w-1 h-1 rounded-full bg-teal-500 animate-pulse [animation-delay:200ms]" />
-                   <div className="w-1 h-1 rounded-full bg-teal-500 animate-pulse [animation-delay:400ms]" />
-                </div>
-             </div>
-             <a href="https://github.com" target="_blank" className="absolute inset-0 z-20" />
-          </div>
-
-        </div>
-      </div>
-    </section>
-  )
+interface Artifact {
+  id: string
+  title: string
+  subtitle: string
+  description: string
+  problem: string
+  tech: string
+  status: string
+  github: string
+  caseStudy: string
+  mockupLabel: string
 }
 
-function ProjectCard({ project, className }: { project: any, className?: string }) {
+export function ProjectsSection() {
+  const [artifacts, setArtifacts] = useState<Artifact[]>([])
+  const [selectedId, setSelectedId] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const data = require('@/lib/data/projects.json')
+    setArtifacts(data)
+    setSelectedId(data[0].id)
+    setIsLoading(false)
+  }, [])
+
+  if (isLoading) return null
+  
+  const activeArtifact = artifacts.find(a => a.id === selectedId)!
+
   return (
-    <div className={cn(
-      "group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-zinc-900/50 p-10 transition-all duration-500 hover:bg-zinc-900 hover:border-teal-500/40 hover:shadow-[0_0_50px_rgba(20,184,166,0.1)]",
-      className
-    )}>
-      <div className="relative z-10 flex h-full flex-col justify-between">
-        <div className="flex items-start justify-between">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black border border-white/10 text-teal-400 transition-all duration-500 group-hover:bg-teal-500 group-hover:text-black">
-            <project.icon className="h-6 w-6" />
-          </div>
-          <div className="flex gap-4 font-mono text-[10px] uppercase text-white/40">
-            <span className="flex items-center gap-1"><Star className="h-3 w-3" /> {project.stars}</span>
-            <span className="flex items-center gap-1"><GitFork className="h-3 w-3" /> {project.forks}</span>
-          </div>
+    <section id="projects" className="relative min-h-screen bg-black overflow-hidden flex flex-col border-b border-white/5">
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col border-x border-white/5 bg-zinc-900/5 relative z-10">
+        {/* HEADER BAR (VIM STYLE) */}
+        <div className="flex border-b border-white/5 bg-zinc-900/20 font-mono text-[10px] uppercase tracking-widest">
+           <div className="w-full md:w-[30%] p-4 border-r border-white/5 flex items-center gap-3">
+              <span className="text-teal-500">//</span> [ LATEST_PROJECTS ]
+           </div>
+           <div className="flex-1 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                 <span className="text-teal-500">//</span> Project Details : <span className="text-white font-bold">[{activeArtifact.title}]</span>
+              </div>
+              <div className="hidden lg:flex items-center gap-6 text-white/20">
+                 <span>MODE: READ-ONLY</span>
+                 <span>ENCODING: UTF-8</span>
+              </div>
+           </div>
         </div>
 
-        <div className="space-y-3">
-          <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-teal-400 transition-colors uppercase font-mono">
-            {project.title}
-          </h3>
-          <p className="text-white/40 text-xs font-mono leading-relaxed line-clamp-3 group-hover:text-white/60 transition-colors">
-            {project.description}
-          </p>
-          <div className="flex flex-wrap gap-2 pt-2">
-            {project.tech.map((t: string) => (
-              <span key={t} className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[8px] font-mono uppercase text-white/40">
-                {t}
-              </span>
-            ))}
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          
+          {/* LEFT PANEL: MANIFEST (30%) */}
+          <div className="w-full md:w-[30%] border-r border-white/5 flex flex-col bg-black/40">
+             <div className="flex-1 py-8">
+                <div className="space-y-1">
+                   {artifacts.map((artifact) => (
+                     <button
+                       key={artifact.id}
+                       onClick={() => setSelectedId(artifact.id)}
+                       className={cn(
+                         "w-full flex items-center justify-between px-8 py-4 font-mono text-sm transition-all duration-300 group",
+                         selectedId === artifact.id 
+                           ? "text-teal-400 bg-teal-500/5 border-l-2 border-teal-500" 
+                           : "text-white/20 hover:text-white/60 hover:bg-white/5 border-l-2 border-transparent"
+                       )}
+                     >
+                        <div className="flex items-center gap-4">
+                           <span className={cn(
+                             "text-[10px] font-bold",
+                             selectedId === artifact.id ? "text-teal-500" : "opacity-0 group-hover:opacity-40"
+                           )}>
+                              {selectedId === artifact.id ? "*" : " "}
+                           </span>
+                           <span className="tracking-tighter uppercase font-bold">{artifact.title}</span>
+                        </div>
+                        
+                        {selectedId === artifact.id && (
+                          <span className="text-[8px] px-1.5 py-0.5 border border-teal-500/30 bg-teal-500/10 text-teal-400 font-bold">
+                             [ACTV]
+                          </span>
+                        )}
+                     </button>
+                   ))}
+                </div>
+
+                {/* ACTION: DISCOVER MORE */}
+                <div className="mt-12 px-8">
+                   <a 
+                     href="https://github.com/timbubadibako" 
+                     target="_blank"
+                     className="inline-flex items-center gap-3 text-white/40 hover:text-teal-400 font-mono text-[10px] uppercase tracking-[0.2em] transition-all group"
+                   >
+                      &gt; [ View All Projects ↗ ]
+                      <ChevronRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                   </a>
+                </div>
+             </div>
+
+             <div className="p-6 border-t border-white/5 bg-zinc-900/10 font-mono text-[8px] text-white/10 uppercase tracking-[0.4em] space-y-2">
+                <p>Total_Artifacts: 0{artifacts.length}</p>
+                <p>Buffer_Status: Optimized</p>
+             </div>
           </div>
+
+          {/* RIGHT PANEL: PREVIEW BUFFER (70%) */}
+          <div className="flex-1 bg-zinc-950/40 relative flex flex-col">
+             <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedId}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3, ease: "circOut" }}
+                  className="flex-1 flex flex-col p-8 md:p-16 lg:p-20 overflow-y-auto custom-scrollbar"
+                >
+                   <div className="relative aspect-video w-full max-w-5xl mx-auto border border-white/10 bg-black overflow-hidden group">
+                      <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20 group-hover:border-teal-500/50 transition-colors z-20" />
+                      <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20 group-hover:border-teal-500/50 transition-colors z-20" />
+                      
+                      <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/50">
+                         <Monitor className="h-12 w-12 text-white/5 animate-pulse" />
+                         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                      </div>
+
+                      <div className="absolute bottom-6 left-6 z-30">
+                         <div className="px-4 py-2 border border-teal-500/30 bg-black/60 backdrop-blur-md font-mono text-[9px] text-teal-400 uppercase tracking-widest flex items-center gap-3">
+                            <span className="h-1.5 w-1.5 bg-teal-500 animate-ping rounded-full" />
+                            Rendering_Visual_Buffer... 100%
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* PROJECT METADATA */}
+                   <div className="mt-12 max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12">
+                      <div className="space-y-6">
+                         <div className="space-y-2">
+                            <span className="font-mono text-[10px] text-teal-500/60 uppercase tracking-[0.4em] font-black">
+                               {activeArtifact.subtitle}
+                            </span>
+                            <h3 className="font-press-start text-2xl md:text-4xl text-white uppercase tracking-tighter">
+                               <GlitchText text={activeArtifact.id} intensity="low" />
+                            </h3>
+                         </div>
+                         <p className="font-mono text-sm text-white/50 leading-relaxed uppercase tracking-wider">
+                            {activeArtifact.description}
+                         </p>
+                      </div>
+
+                      <div className="space-y-8 lg:border-l lg:border-white/5 lg:pl-12">
+                         <div className="space-y-4">
+                            <div className="flex items-center gap-4 text-white/40 font-mono text-[10px] uppercase tracking-widest">
+                               <FileCode className="h-4 w-4 text-teal-500/40" />
+                               <span>&gt; Tech Stack : <span className="text-teal-400 font-bold">{activeArtifact.tech}</span></span>
+                            </div>
+                            <div className="flex items-center gap-4 text-white/40 font-mono text-[10px] uppercase tracking-widest">
+                               <Signal className="h-4 w-4 text-teal-500/40" />
+                               <span>&gt; Status : <span className="text-green-500 font-bold">{activeArtifact.status}</span></span>
+                            </div>
+                         </div>
+
+                         <div className="flex flex-wrap gap-4 pt-4">
+                            <a 
+                              href={activeArtifact.github} 
+                              className="px-6 py-2 bg-teal-500 text-black font-mono text-[9px] font-black uppercase tracking-widest hover:bg-teal-400 transition-all shadow-[0_0_20px_rgba(20,184,166,0.3)] flex items-center gap-3"
+                            >
+                               <Globe className="h-3.5 w-3.5" /> [ View Repository ]
+                            </a>
+                            <a 
+                              href={activeArtifact.caseStudy} 
+                              className="px-6 py-2 border border-white/10 bg-white/5 text-white/40 font-mono text-[9px] font-black uppercase tracking-widest hover:border-teal-500/50 hover:text-white transition-all flex items-center gap-3"
+                            >
+                               [ Case Study ] <ExternalLink className="h-3 w-3" />
+                            </a>
+                         </div>
+                      </div>
+                   </div>
+                </motion.div>
+             </AnimatePresence>
+          </div>
+
         </div>
       </div>
 
-      <div className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none" 
-        style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #14b8a6 1px, transparent 0)', backgroundSize: '16px 16px' }} 
-      />
-
-      <a 
-        href={project.link} 
-        className="absolute inset-0 z-20 cursor-pointer"
-        aria-label={`View ${project.title}`}
-      />
-    </div>
+      {/* Decorative Grid Overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02] z-[-1]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+    </section>
   )
 }

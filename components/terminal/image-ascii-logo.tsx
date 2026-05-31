@@ -2,8 +2,8 @@
 
 export function ImageAsciiLogo() {
   return (
-    <div className="bg-black/20 p-4 font-mono">
-      <pre className="text-teal-500 whitespace-pre overflow-x-auto text-[10px] md:text-xs leading-none terminal-text-glow">
+    <div className="bg-black/20 p-4 font-vt323">
+      <pre className="text-teal-500 whitespace-pre overflow-x-auto text-[10px] md:text-xs leading-none terminal-text-glow contain-content">
         {`
    _____  ________________   ____  __________  __________    __   
   /  _  \\/  _____/\\_____  \\ /  _ \\/  _____/\\ \\ \\ \\ \\ \\ \\   /  |  

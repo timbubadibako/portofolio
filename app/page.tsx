@@ -3,26 +3,15 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from "framer-motion"
 import Terminal from "@/components/terminal/terminal"
-import BootSequence from "@/components/terminal/boot-sequence"
-import { CRTToggle } from "@/components/terminal/crt-toggle"
 import { Page as InterPage } from "@/components/inter/page"
-import { SideNav } from "@/components/inter/side-nav"
+import { NvimSidebar } from "@/components/inter/nvim-sidebar"
+import { DataStreamTransition } from "@/components/inter/data-stream-transition"
 import { AnimatedNoise } from "@/components/inter/animated-noise"
 
 type DisplayMode = 'terminal' | 'gui'
 
 export default function GrandControllerPage() {
   const [mode, setMode] = useState<DisplayMode>('terminal')
-  const [booting, setBooting] = useState(true)
-
-  useEffect(() => {
-    if (mode === 'terminal') {
-      const timer = setTimeout(() => {
-        setBooting(false)
-      }, 2500)
-      return () => clearTimeout(timer)
-    }
-  }, [mode])
 
   // Apply overflow style to body to ensure scrolling works correctly for SideNav
   useEffect(() => {
@@ -42,7 +31,7 @@ export default function GrandControllerPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-black font-mono selection:bg-teal-500/30">
+    <div className="relative min-h-screen bg-black font-mono selection:bg-teal-500/30 overflow-x-hidden">
       {/* 
           GLOBAL OVERLAYS 
           Kept at root to ensure they are always on top and truly fixed
@@ -50,9 +39,10 @@ export default function GrandControllerPage() {
       <div className="crt-overlay pointer-events-none z-[1000]" />
       <div className="scanlines pointer-events-none z-[1001]" />
       <AnimatedNoise opacity={0.03} />
+      <DataStreamTransition />
       
-      {/* SideNav with its own internal AnimatePresence */}
-      {mode === 'gui' && <SideNav />}
+      {/* Global Navigation: NvimTree Sidebar */}
+      {mode === 'gui' && <NvimSidebar />}
 
       <AnimatePresence mode="wait">
         {mode === 'terminal' && (
@@ -64,24 +54,22 @@ export default function GrandControllerPage() {
             transition={{ duration: 0.5, ease: "circOut" }}
             className="relative z-10 h-screen overflow-hidden"
           >
-             <div
-              className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
-              style={{
-                backgroundImage: 'url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wp14013807.jpg-R0GMP9bCUVPW5Qfg2rbLlUeYSGymlM.jpeg")',
-                backgroundPosition: "center 40%",
-                filter: "brightness(0.4) contrast(1.2) grayscale(0.5)",
-              }}
-              aria-hidden="true"
-            >
-              <div className="absolute inset-0 bg-black/60" />
+             <div className="fixed inset-0 z-0 bg-black">
+              {/* Industrial Grid for Terminal Mode */}
+              <div 
+                className="absolute inset-0 opacity-10 pointer-events-none" 
+                style={{ 
+                  backgroundImage: 'radial-gradient(circle, #14b8a6 1px, transparent 1px)', 
+                  backgroundSize: '32px 32px' 
+                }} 
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-teal-500/[0.02] to-transparent" />
             </div>
 
-            <div className="absolute top-6 right-6 z-50">
-              <CRTToggle />
-            </div>
-
-            <div className="container mx-auto px-6 py-12 h-screen flex flex-col relative z-10">
-              {booting ? <BootSequence /> : <Terminal onModeSwitch={handleModeSwitch} />}
+            <div className="container mx-auto px-6 py-12 h-screen flex flex-col items-center justify-center relative z-10">
+              <div id="terminal-root" className="w-full max-w-5xl h-[85vh] md:h-[80vh] flex flex-col px-0 md:px-0">
+                <Terminal onModeSwitch={handleModeSwitch} />
+              </div>
             </div>
           </motion.main>
         )}

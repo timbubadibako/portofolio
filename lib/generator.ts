@@ -25,7 +25,7 @@ export interface ProjectContext {
 
 export function generateProjectContext(state: ReturnType<typeof useProjectStore.getState>): ProjectContext {
   return {
-    $schema: "https://pajril.dev/schemas/context-v1.json",
+    $schema: "https://jrilym.dev/schemas/context-v1.json",
     projectMeta: {
       name: state.name,
       type: state.type,
