@@ -9,22 +9,27 @@ export function AboutSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
   const [visibleLines, setVisibleLines] = useState(0)
 
   useEffect(() => {
-    if (mode === 'terminal') {
-      const termData = require('@/lib/data/terminal_data.json')
-      setData(termData.profile)
+    async function fetchProfile() {
+      try {
+        const res = await fetch('/api/profile')
+        const profile = await res.json()
+        setData(profile)
+      } catch (err) {
+        console.error("Failed to fetch profile")
+      }
     }
-  }, [mode])
+    fetchProfile()
+  }, [])
 
   const profileLines = data ? [
     `identity:`,
-    `  name: ${data.identity.name}`,
-    `  alias: ${data.identity.alias}`,
-    `  role: ${data.identity.role}`,
-    `  location: ${data.identity.location}`,
+    `  name: ${data.name}`,
+    `  alias: ${data.alias}`,
+    `  role: ${data.role}`,
+    `  location: ${data.location}`,
     ``,
     `status:`,
-    `  academic: ${data.status.academic}`,
-    `  specialty: ${data.status.specialty}`,
+    `  specialty: Neural Systems & Cloud Security`,
     ``,
     `philosophy: >`,
     `  Small problems are still problems.`
@@ -78,30 +83,31 @@ export function AboutSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
         </div>
 
         <div className="md:w-2/3 space-y-6">
-          <div className="bg-teal-500/5 border border-teal-500/20 p-6 relative overflow-hidden font-mono">
+          <div className="bg-teal-500/5 border border-teal-500/20 p-6 relative overflow-hidden font-mono text-xs md:text-sm text-teal-400 leading-relaxed whitespace-pre-wrap">
              <div className="absolute top-0 right-0 p-2 text-[8px] text-teal-500/20 uppercase tracking-widest">profile.yaml</div>
-             <pre className="text-xs md:text-sm text-teal-400 leading-relaxed whitespace-pre-wrap">
+             {data ? (
+               <pre>
 {`identity:
-  name: SYIFA PAJRIL YAUM
-  alias: PAJRIL
-  role: AI & Fullstack Developer
-  location: Kuningan, West Java
+  name: ${data.name}
+  alias: ${data.alias}
+  role: ${data.role}
+  location: ${data.location}
 
-status:
-  academic: Undergraduate @ UNIKU
-  specialty: Neural Systems & Cloud Security
+bio: >
+  ${data.bio}
 
-off_screen_log:
-  os: Arch Linux (btw)
-  editor: Neovim / VS Code
-  physicals: 
-    - Football (Center Back)
-    - Gym (System Recovery)
+contact:
+  email: ${data.email}
+  github: ${data.github}
+  linkedin: ${data.linkedin}
 
 philosophy: >
   Architecting solid ecosystems from 
   fundamental infrastructure to neural execution.`}
-             </pre>
+               </pre>
+             ) : (
+               <div className="animate-pulse">Loading Biometric Data...</div>
+             )}
           </div>
         </div>
       </div>

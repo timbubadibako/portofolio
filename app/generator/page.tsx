@@ -352,7 +352,6 @@ export default function GeneratorPage() {
               </AnimatePresence>
            </div>
 
-           {/* Footer Action Bar */}
            <div className="bg-zinc-900/30 border-t border-white/5 p-6 md:p-8 flex items-center justify-between">
               <Button 
                 variant="ghost" 
@@ -381,7 +380,6 @@ export default function GeneratorPage() {
 
       </div>
 
-      {/* Decorative Grid Overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] z-0" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
     </div>
   )

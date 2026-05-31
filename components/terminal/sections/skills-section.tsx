@@ -10,23 +10,23 @@ export function SkillsSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (mode === 'terminal') {
-      const termData = require('@/lib/data/terminal_data.json')
-      setSkillPackages(termData.skills.map((s: any) => ({
-        name: s.pkg,
-        skills: s.items.split(', '),
-        progress: s.stable
-      })))
-    } else {
-      const guiData = require('@/lib/data/skills.json')
-      setSkillPackages(guiData.map((s: any) => ({
-        name: s.title,
-        skills: s.skills.map((sk: any) => sk.name),
-        progress: s.skills[0]?.level || 90
-      })))
+    async function fetchSkills() {
+      try {
+        const res = await fetch('/api/skills')
+        const data = await res.json()
+        setSkillPackages(data.map((s: any) => ({
+          name: s.category || s.name,
+          skills: s.items || [],
+          progress: s.level || 90
+        })))
+      } catch (err) {
+        console.error("Failed to fetch skills")
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setIsLoading(false)
-  }, [mode])
+    fetchSkills()
+  }, [])
 
   useEffect(() => {
     if (!isLoading && installedCount < skillPackages.length) {
@@ -37,7 +37,13 @@ export function SkillsSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
     }
   }, [installedCount, skillPackages.length, isLoading])
 
-  if (isLoading) return null
+  if (isLoading) {
+    return (
+      <div className="text-teal-500 font-mono text-xs animate-pulse">
+         [ CONNECTING_TO_CORE_DATABASE... ]
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 font-mono">
@@ -46,7 +52,7 @@ export function SkillsSection({ mode = 'gui' }: { mode?: 'gui' | 'terminal' }) {
            <span className="animate-pulse">❯</span> yay -S pajril-stack
         </p>
         <p className="opacity-60 mt-1">:: Resolving dependencies...</p>
-        <p className="opacity-60">:: Looking for internal core packages...</p>
+        <p className="opacity-60">:: Fetching technical competency records...</p>
       </div>
 
       <div className="space-y-8">

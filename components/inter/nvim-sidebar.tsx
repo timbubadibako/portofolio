@@ -24,6 +24,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "identity", label: "identity.sys", icon: FileText, path: "~/root/identity", href: "/", type: 'file' },
   { id: "profile", label: "profile.bio", icon: User, path: "~/root/profile", href: "/profile", type: 'file' },
+  { id: "lab", label: "security_lab/", icon: Shield, path: "~/root/security_lab", href: "/lab", type: 'folder' },
   { id: "projects", label: "artifacts/", icon: Folder, path: "~/root/artifacts", href: "/projects", type: 'folder' },
   { id: "generator", label: "generator/", icon: Zap, path: "~/root/generator", href: "/generator", type: 'file' },
   { id: "background", label: "system_log.log", icon: Clock, path: "~/root/system_log", href: "/background", type: 'file' },

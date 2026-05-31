@@ -26,6 +26,7 @@ type Command = {
 const COMMAND_LIST = [
   "reboot",
   "whoami",
+  "lab --enter",
   "cat profile.txt",
   "yay -S pajril-stack",
   "ls -la projects/",
@@ -46,7 +47,7 @@ const NAV_SHORTCUTS = [
   { label: "Identity", cmd: "whoami" },
   { label: "Skills", cmd: "yay -S pajril-stack" },
   { label: "Projects", cmd: "ls -la projects/" },
-  { label: "Log", cmd: "cat background.log" },
+  { label: "Lab", cmd: "lab --enter" },
   { label: "Contact", cmd: "cat contact.txt" },
   { label: "GUI", cmd: "startx" },
 ]
@@ -277,6 +278,18 @@ export default function Terminal({ onModeSwitch }: { onModeSwitch?: (mode: 'gui'
         output = <ContactSection mode="terminal" />
         setCurrentSection("contact")
         break
+
+      case "lab --enter":
+        setCommandHistory(prev => [...prev, { 
+          input: 'lab --enter', 
+          output: <p className="text-red-500 animate-pulse uppercase tracking-widest">[ SECURITY_ALERT ] Entering Vulnerability Research Lab... Launching Sandbox UI.</p>, 
+          timestamp: new Date() 
+        }])
+        setTimeout(() => {
+           router.push('/lab')
+        }, 1000)
+        setInput("")
+        return
 
       case "whoami":
         output = (
