@@ -10,6 +10,6 @@ export async function GET() {
       items: s.skills.map((sk: any) => sk.name)
     })))
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to read local skills data" }, { status: 500 })
   }
 }

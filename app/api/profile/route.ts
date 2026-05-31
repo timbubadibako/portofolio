@@ -14,6 +14,6 @@ export async function GET() {
       linkedin: localData.contact.linkedin
     })
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to read local profile data" }, { status: 500 })
   }
 }

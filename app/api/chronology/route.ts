@@ -11,6 +11,6 @@ export async function GET() {
       type: item.type || "WORK"
     })))
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch chronology" }, { status: 500 })
+    return NextResponse.json({ error: "Failed to read local chronology data" }, { status: 500 })
   }
 }

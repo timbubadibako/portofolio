@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { 
   Menu, X, ChevronRight, Folder, FileText, 
   User, Terminal, Mail, ExternalLink,
-  BookOpen, Globe, Shield, Zap, Box, Clock, Activity, Cpu, Monitor
+  BookOpen, Globe, Shield, Zap, Box, Clock, Activity, Cpu, Monitor, Settings
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
