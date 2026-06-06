@@ -1,35 +1,4 @@
-Build Error
-
-
-
-Expected '</', got '{'
-./components/preview/templates/Template1.tsx (79:17)
-
-Expected '</', got '{'
-  77 |                     <p className="text-gray-700 leading-tight">{fallbackGender}</p>
-  78 |                   </div>
-> 79 |                 {(personal.links ?? []).map(link => (
-     |                 ^
-  80 |                   <div key={link.id}>
-  81 |                     <p className="font-bold">{link.platform}</p>
-  82 |                     <p className="text-gray-700 leading-tight break-all underline italic">
-
-Parsing ecmascript source code failed
-
-Import traces:
-  Client Component Browser:
-    ./components/preview/templates/Template1.tsx [Client Component Browser]
-    ./components/preview/templates/TemplateRegistry.ts [Client Component Browser]
-    ./components/preview/ResumePreview.tsx [Client Component Browser]
-    ./app/page.tsx [Client Component Browser]
-    ./app/page.tsx [Server Component]
-
-  Client Component SSR:
-    ./components/preview/templates/Template1.tsx [Client Component SSR]
-    ./components/preview/templates/TemplateRegistry.ts [Client Component SSR]
-    ./components/preview/ResumePreview.tsx [Client Component SSR]
-    ./app/page.tsx [Client Component SSR]
-    ./app/page.tsx [Server Component]'use client'
+'use client'
 
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
