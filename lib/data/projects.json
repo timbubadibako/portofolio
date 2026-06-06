@@ -1,0 +1,38 @@
+[
+  {
+    "id": "STRIDE_IO",
+    "title": "STRIDE_IO",
+    "subtitle": "GAMIFIED GPS TRACKER",
+    "description": "High-precision mobile ecosystem for fitness enthusiasts. Features real-time GPS pathing, social competitive leaderboards, and neural-link health telemetry integration.",
+    "problem": "Existing trackers lack low-latency synchronization and meaningful user engagement through gamification.",
+    "tech": "Kotlin, GPS Mapping, Supabase",
+    "status": "LIVE",
+    "github": "https://github.com/timbubadibako",
+    "caseStudy": "#",
+    "mockupLabel": "MOBILE_INTERFACE_RENDER_v2.0"
+  },
+  {
+    "id": "NEXIO",
+    "title": "NEXIO_MARKETPLACE",
+    "subtitle": "ENTERPRISE B2B PORTAL",
+    "description": "Cloud-native marketplace architected for high-volume inventory management and secure server-side transaction processing. Scalable infrastructure for global deployments.",
+    "problem": "Legacy B2B systems suffer from monolithic bottlenecks and insecure data handling at scale.",
+    "tech": "React, Next.js, PostgreSQL",
+    "status": "PRODUCTION",
+    "github": "https://github.com/timbubadibako",
+    "caseStudy": "#",
+    "mockupLabel": "DASHBOARD_ANALYTICS_BUFFER"
+  },
+  {
+    "id": "ASR_ENGINE",
+    "title": "ASR_ENGINE",
+    "subtitle": "NEURAL SPEECH PROCESSOR",
+    "description": "Advanced Automatic Speech Recognition engine utilizing transformer architectures for extreme accuracy in noisy environments. Real-time audio feature extraction.",
+    "problem": "Real-time speech-to-text often degrades significantly in non-studio acoustic environments.",
+    "tech": "Python, PyTorch, Librosa",
+    "status": "BETA",
+    "github": "https://github.com/timbubadibako",
+    "caseStudy": "#",
+    "mockupLabel": "WAVEFORM_SYNTHESIS_MODEL"
+  }
+]
